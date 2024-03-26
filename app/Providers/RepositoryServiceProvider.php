@@ -9,6 +9,7 @@ use App\Repository\Api\User\UserRepository as UserApiRepository;
 use App\Repository\Api\User\PaymentRepository as PaymentApiRepository;
 
 use App\Interfaces\{
+    AdInterface,
     AuthInterface,
     UserInterface,
     AdminInterface,
@@ -20,6 +21,7 @@ use App\Repository\{
     AuthRepository,
     UserRepository,
     AdPackageRepository,
+    AdRepository,
     MainRepository
 };
 
@@ -40,6 +42,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(AdminInterface::class,AdminRepository::class);
         $this->app->bind(UserInterface::class,UserRepository::class);
         $this->app->bind(AdPackageInterface::class,AdPackageRepository::class);
+        $this->app->bind(AdInterface::class,AdRepository::class);
         // ----------------------------------------------------------------
 
 

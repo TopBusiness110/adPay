@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\{
 };
 use illuminate\Filesystem\symlink;
 use App\Http\Controllers\Admin\{
+    AdController,
     AuthController,
     MainController,
     UserController,
@@ -65,6 +66,10 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth:user'], function () {
     Route::get('ad_packages/{id}/edit', [AdPackageController::class, 'showEdit'])->name('ad_packages.edit');
     Route::put('ad_packages/update/{id}', [AdPackageController::class, 'update'])->name('ad_packages.update');
     Route::delete('ad_packages/{id}/delete', [AdPackageController::class, 'delete'])->name('ad_packages.delete');
+
+    #============================ Ads =====================================
+    Route::get('ads', [AdController::class, 'index'])->name('ads.index');
+    Route::delete('ad/{id}/delete', [AdController::class, 'delete'])->name('ad.delete');
 
 });
 

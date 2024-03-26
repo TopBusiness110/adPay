@@ -27,6 +27,12 @@
         </li>
 
         <li class="slide">
+            <a class="side-menu__item" href="{{ route('ads.index') }}">
+                <i class="fa fa-users side-menu__icon"></i>
+                <span class="side-menu__label">الاعلانات</span>
+            </a>
+        </li>
+        <li class="slide">
             <a class="side-menu__item" href="{{ route('ad_packages.index') }}">
                 <i class="fa fa-users side-menu__icon"></i>
                 <span class="side-menu__label">باقات الاعلانات</span>
