@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\{
     AdPackageController,
     AppUserController,
     AuctionCategoryController,
+    AuctionSubCategoryController,
     CityController,
     ConfigCountController,
     CouponController,
@@ -76,6 +77,14 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth:user'], function () {
     Route::get('auction_categorY/{id}/edit', [AuctionCategoryController::class, 'showEdit'])->name('auctionCategory.edit');
     Route::put('auction_categorY/update/{id}', [AuctionCategoryController::class, 'update'])->name('auctionCategory.update');
     Route::delete('auction_categorY/{id}/delete', [AuctionCategoryController::class, 'delete'])->name('auctionCategory.delete');
+
+    #============================ Auction Sub Category =====================================
+    Route::get('auction_sub_categories', [AuctionSubCategoryController::class, 'index'])->name('auctionSubCategories.index');
+    Route::get('auction_sub_category/create', [AuctionSubCategoryController::class, 'showCreate'])->name('auctionSubCategory.create');
+    Route::post('auction_sub_category/store', [AuctionSubCategoryController::class, 'store'])->name('auctionSubCategory.store');
+    Route::get('auction_sub_category/{id}/edit', [AuctionSubCategoryController::class, 'showEdit'])->name('auctionSubCategory.edit');
+    Route::put('auction_sub_category/update/{id}', [AuctionSubCategoryController::class, 'update'])->name('auctionSubCategory.update');
+    Route::delete('auction_sub_category/{id}/delete', [AuctionSubCategoryController::class, 'delete'])->name('auctionSubCategory.delete');
 
     #============================ Ads =====================================
     Route::get('ads', [AdController::class, 'index'])->name('ads.index');
