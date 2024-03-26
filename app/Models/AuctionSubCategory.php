@@ -20,6 +20,6 @@ class AuctionSubCategory extends Model
 
     public function auctionCategory() : BelongsTo
     {
-        return $this->belongsTo(AuctionCategory::class);
+        return $this->belongsTo(AuctionCategory::class, 'cat_id', 'id');
     }
 }
