@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\{
     AdPackageController,
     AppUserController,
     AuctionCategoryController,
+    AuctionController,
     AuctionSubCategoryController,
     CityController,
     ConfigCountController,
@@ -93,6 +94,10 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth:user'], function () {
     #============================ App User =====================================
     Route::get('app_users', [AppUserController::class, 'index'])->name('appUsers.index');
     Route::delete('app_user/{id}/delete', [AppUserController::class, 'delete'])->name('appUser.delete');
+
+    #============================ Auction =====================================
+    Route::get('auctions', [AuctionController::class, 'index'])->name('auctions.index');
+    Route::delete('auction/{id}/delete', [AuctionController::class, 'delete'])->name('auction.delete');
 
 });
 
