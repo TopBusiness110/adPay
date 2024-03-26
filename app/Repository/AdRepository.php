@@ -35,4 +35,12 @@ class AdRepository implements AdInterface
             return view('admin/ads/index');
         }
     }
+
+    public function delete($request)
+    {
+        $ad = Ad::findOrFail($request->id);
+
+        $ad->delete();
+        return response(['message' => 'تم الحذف بنجاح', 'status' => 200], 200);
+    }
 }

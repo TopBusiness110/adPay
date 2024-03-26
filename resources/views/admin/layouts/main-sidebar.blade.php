@@ -20,7 +20,7 @@
         </li>
 
         <li class="slide">
-            <a class="side-menu__item" href="{{ route('users.index') }}">
+            <a class="side-menu__item" href="{{ route('appUsers.index') }}">
                 <i class="fa fa-users side-menu__icon"></i>
                 <span class="side-menu__label">المستخدمين</span>
             </a>
