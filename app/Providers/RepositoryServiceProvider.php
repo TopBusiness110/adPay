@@ -15,6 +15,7 @@ use App\Interfaces\{
     AdminInterface,
     AdPackageInterface,
     AppUserInterface,
+    AuctionCategoryInterface,
     MainInterface
 };
 use App\Repository\{
@@ -24,6 +25,7 @@ use App\Repository\{
     AdPackageRepository,
     AdRepository,
     AppUserRepository,
+    AuctionCategoryRepository,
     MainRepository
 };
 
@@ -46,6 +48,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(AdPackageInterface::class,AdPackageRepository::class);
         $this->app->bind(AdInterface::class,AdRepository::class);
         $this->app->bind(AppUserInterface::class,AppUserRepository::class);
+        $this->app->bind(AuctionCategoryInterface::class,AuctionCategoryRepository::class);
         // ----------------------------------------------------------------
 
 
