@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\{
     UserController,
     AdminController,
     AdPackageController,
+    AppUserController,
     CityController,
     ConfigCountController,
     CouponController,
@@ -70,6 +71,10 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth:user'], function () {
     #============================ Ads =====================================
     Route::get('ads', [AdController::class, 'index'])->name('ads.index');
     Route::delete('ad/{id}/delete', [AdController::class, 'delete'])->name('ad.delete');
+
+    #============================ App User =====================================
+    Route::get('app_users', [AppUserController::class, 'index'])->name('appUsers.index');
+    Route::delete('app_user/{id}/delete', [AppUserController::class, 'delete'])->name('appUser.delete');
 
 });
 
