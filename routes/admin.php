@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\{
     AdminController,
     AdPackageController,
     AppUserController,
+    AuctionCategoryController,
     CityController,
     ConfigCountController,
     CouponController,
@@ -67,6 +68,14 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth:user'], function () {
     Route::get('ad_packages/{id}/edit', [AdPackageController::class, 'showEdit'])->name('ad_packages.edit');
     Route::put('ad_packages/update/{id}', [AdPackageController::class, 'update'])->name('ad_packages.update');
     Route::delete('ad_packages/{id}/delete', [AdPackageController::class, 'delete'])->name('ad_packages.delete');
+
+    #============================ Auction Category =====================================
+    Route::get('auction_categories', [AuctionCategoryController::class, 'index'])->name('auctionCategories.index');
+    Route::get('auction_categorY/create', [AuctionCategoryController::class, 'showCreate'])->name('auctionCategory.create');
+    Route::post('auction_categorY/store', [AuctionCategoryController::class, 'store'])->name('auctionCategory.store');
+    Route::get('auction_categorY/{id}/edit', [AuctionCategoryController::class, 'showEdit'])->name('auctionCategory.edit');
+    Route::put('auction_categorY/update/{id}', [AuctionCategoryController::class, 'update'])->name('auctionCategory.update');
+    Route::delete('auction_categorY/{id}/delete', [AuctionCategoryController::class, 'delete'])->name('auctionCategory.delete');
 
     #============================ Ads =====================================
     Route::get('ads', [AdController::class, 'index'])->name('ads.index');
