@@ -20,8 +20,10 @@ use App\Interfaces\{
     AuctionSubCategoryInterface,
     MainInterface,
     NotificationInterface,
-    OrderInterface
+    OrderInterface,
+    ShopCategoryInterface
 };
+use App\Models\ShopCategory;
 use App\Repository\{
     AdminRepository,
     AuthRepository,
@@ -34,7 +36,8 @@ use App\Repository\{
     AuctionSubCategoryRepository,
     MainRepository,
     NotificationRepository,
-    OrderRepository
+    OrderRepository,
+    ShopCategoryRepository
 };
 
 
@@ -61,6 +64,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(AuctionInterface::class,AuctionRepository::class);
         $this->app->bind(NotificationInterface::class,NotificationRepository::class);
         $this->app->bind(OrderInterface::class,OrderRepository::class);
+        $this->app->bind(ShopCategoryInterface::class,ShopCategoryRepository::class);
         // ----------------------------------------------------------------
 
 
