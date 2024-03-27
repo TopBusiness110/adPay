@@ -8,4 +8,6 @@ enum UserEnums : string {
     case VENDOR = 'vendor';
     
     case ADVERTISE = 'advertise';
+    
+    case ALL = 'all';
 }

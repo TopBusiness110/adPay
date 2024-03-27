@@ -35,7 +35,7 @@
                                     <input type="text" class="form-control" name="title_ar">
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="title_en" class="form-control-label">العنوان بالعربي</label>
+                                    <label for="title_en" class="form-control-label">العنوان بالانجليزي</label>
                                     <input type="text" class="form-control" name="title_en">
                                 </div>
                             </div>

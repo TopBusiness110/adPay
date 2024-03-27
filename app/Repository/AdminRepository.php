@@ -75,7 +75,6 @@ class AdminRepository implements AdminInterface
 
     public function storeAdmin($request)
     {
-        dd($request);
         try {
             $inputs = $this->processInputs($request);
 

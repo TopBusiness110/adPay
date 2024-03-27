@@ -22,7 +22,7 @@ class AuctionRepository implements AuctionInterface
                        ';
                 })
                 ->editColumn('user_id', function ($auctions) {
-                    return $auctions->user->name;
+                    return $auctions->user->name ?? '';
                 })
                 ->editColumn('cat_id', function ($auctions) {
                     return $auctions->auctionCategory->title_ar;
