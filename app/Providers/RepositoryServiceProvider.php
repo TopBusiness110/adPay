@@ -18,7 +18,9 @@ use App\Interfaces\{
     AuctionCategoryInterface,
     AuctionInterface,
     AuctionSubCategoryInterface,
-    MainInterface
+    MainInterface,
+    NotificationInterface,
+    OrderInterface
 };
 use App\Repository\{
     AdminRepository,
@@ -30,7 +32,9 @@ use App\Repository\{
     AuctionCategoryRepository,
     AuctionRepository,
     AuctionSubCategoryRepository,
-    MainRepository
+    MainRepository,
+    NotificationRepository,
+    OrderRepository
 };
 
 
@@ -55,6 +59,8 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(AuctionCategoryInterface::class,AuctionCategoryRepository::class);
         $this->app->bind(AuctionSubCategoryInterface::class,AuctionSubCategoryRepository::class);
         $this->app->bind(AuctionInterface::class,AuctionRepository::class);
+        $this->app->bind(NotificationInterface::class,NotificationRepository::class);
+        $this->app->bind(OrderInterface::class,OrderRepository::class);
         // ----------------------------------------------------------------
 
 

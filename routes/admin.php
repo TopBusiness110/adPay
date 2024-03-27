@@ -29,6 +29,7 @@ use App\Http\Controllers\Admin\{
     UserActionController,
     TubeController,
     ModelPriceController,
+    OrderController,
     PaymentTransactionController,
     SettingController,
     WithdrawController,
@@ -99,6 +100,16 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth:user'], function () {
     Route::get('auctions', [AuctionController::class, 'index'])->name('auctions.index');
     Route::delete('auction/{id}/delete', [AuctionController::class, 'delete'])->name('auction.delete');
 
+    #============================ Notification =====================================
+    Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('notification/create', [NotificationController::class, 'showCreate'])->name('notification.create');
+    Route::post('notification/store', [NotificationController::class, 'store'])->name('notification.store');
+    Route::delete('notification/{id}/delete', [NotificationController::class, 'delete'])->name('notification.delete');
+    Route::get('/get-users', [NotificationController::class, 'getUsers'])->name('get_users');
+
+    #============================ Order =====================================
+    Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::delete('order/{id}/delete', [OrderController::class, 'delete'])->name('order.delete');
 });
 
 
@@ -115,4 +126,3 @@ Route::get('/clear', function () {
     Artisan::call('storage:link');
     return response()->json(['status' => 'success', 'code' => 1000000000]);
 });
-
