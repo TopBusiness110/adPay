@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\{
     AuctionSubCategoryController,
     NotificationController,
     OrderController,
+    ProductController,
     ShopCategoryController,
 };
 
@@ -105,8 +106,8 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth:user'], function () {
     Route::delete('shop_category/{id}/delete', [ShopCategoryController::class, 'delete'])->name('shop_category.delete');
 
     #============================ Product =====================================
-    Route::get('products', [ShopCategoryController::class, 'index'])->name('shop_categories.index');
-    Route::delete('product/{id}/delete', [ShopCategoryController::class, 'delete'])->name('shop_category.delete');
+    Route::get('products', [ProductController::class, 'index'])->name('products.index');
+    Route::delete('product/{id}/delete', [ProductController::class, 'delete'])->name('product.delete');
 });
 
 

@@ -21,13 +21,23 @@ class ProductRepository implements ProductInterface
                                 </button>
                        ';
                 })
-                ->editColumn('user_id', function ($products) {
-                    return $products->user->name;
+                ->editColumn('vendor_id', function ($products) {
+                    return $products->vendor->name ?? '';
+                })
+                ->editColumn('shop_cat_id', function ($products) {
+                    return $products->shopCategory->title_ar ?? '';
+                })
+                ->editColumn('type', function ($products) {
+                    if ($products->type == 'new') {
+                        return 'جديد' ?? '';
+                    } else if ($products->type == 'used') {
+                        return 'مستخدمة' ?? '';
+                    }
                 })
                 ->editColumn('images', function ($products) {
                     return '
                     <img alt="image" onclick="window.open(this.src)" class="avatar avatar-md rounded-circle" src="' . asset('storage/' . $products->image) . '">
-                    ';
+                    ' ?? '';
                 })
                 ->escapeColumns([])
                 ->make(true);
@@ -38,7 +48,6 @@ class ProductRepository implements ProductInterface
 
     public function changeStatusProduct($request)
     {
-
     }
 
     public function delete($request)

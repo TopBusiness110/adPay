@@ -30,7 +30,7 @@ class Product extends Model
 
     public function vendor() : BelongsTo
     {
-        return $this->belongsTo(User::class,'vendor_id', 'id');
+        return $this->belongsTo(AppUser::class,'vendor_id', 'id')->where('type', 'vendor');
     }
 
     public function shopCategory() : BelongsTo

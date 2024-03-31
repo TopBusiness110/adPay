@@ -29,12 +29,12 @@
                             <thead>
                             <tr class="fw-bolder text-muted bg-light">
                                 <th class="min-w-25px">#</th>
-                                <th class="min-w-50px">الصورة</th>
-                                <th class="min-w-50px">العنوان</th>
-                                <th class="min-w-50px">المستخدم</th>
-                                <th class="min-w-50px">عدد المشاهدات</th>
-                                <th class="min-w-50px">الحالة</th>
-                                <th class="min-w-50px">مكتمل</th>
+                                <th class="min-w-50px">الصور</th>
+                                <th class="min-w-50px">التاجر</th>
+                                <th class="min-w-50px">النوع</th>
+                                <th class="min-w-50px">السعر</th>
+                                <th class="min-w-50px">الفئة</th>
+                                <th class="min-w-50px">فئة الفرعية</th>
                                 <th class="min-w-50px rounded-end">العمليات</th>
                             </tr>
                             </thead>
@@ -77,17 +77,17 @@
     <script>
         var columns = [
             {data: 'id', name: 'id'},
-            {data: 'image', name: 'image'},
-            {data: 'title_ar', name: 'title_ar'},
-            {data: 'user_id', name: 'user_id'},
-            {data: 'count_views', name: 'count_views'},
-            {data: 'status', name: 'status'},
-            {data: 'complete', name: 'complete'},
+            {data: 'images', name: 'images'},
+            {data: 'vendor_id', name: 'vendor_id'},
+            {data: 'type', name: 'type'},
+            {data: 'price', name: 'price'},
+            {data: 'shop_cat_id', name: 'shop_cat_id'},
+            {data: 'shop_sub_cat', name: 'shop_sub_cat'},
             {data: 'action', name: 'action', orderable: false, searchable: false},
         ]
-        showData('{{route('ads.index')}}', columns);
+        showData('{{route('products.index')}}', columns);
 
-        deleteScript('{{route('ad.delete', ':id')}}');
+        deleteScript('{{route('product.delete', ':id')}}');
 
         
     </script>
