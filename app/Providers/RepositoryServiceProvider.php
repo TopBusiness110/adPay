@@ -21,6 +21,7 @@ use App\Interfaces\{
     MainInterface,
     NotificationInterface,
     OrderInterface,
+    ProductInterface,
     ShopCategoryInterface
 };
 use App\Models\ShopCategory;
@@ -37,6 +38,7 @@ use App\Repository\{
     MainRepository,
     NotificationRepository,
     OrderRepository,
+    ProductRepository,
     ShopCategoryRepository
 };
 
@@ -65,6 +67,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(NotificationInterface::class,NotificationRepository::class);
         $this->app->bind(OrderInterface::class,OrderRepository::class);
         $this->app->bind(ShopCategoryInterface::class,ShopCategoryRepository::class);
+        $this->app->bind(ProductInterface::class,ProductRepository::class);
         // ----------------------------------------------------------------
 
 
