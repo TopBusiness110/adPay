@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\OrderTypeEnums;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -34,5 +35,11 @@ class Order extends Model
     {
         return $this->hasMany(OrderDetail::class,'order_id','id');
     }
+
+
+
+    protected $casts = [
+        'role' => OrderTypeEnums::class
+    ];
 
 }

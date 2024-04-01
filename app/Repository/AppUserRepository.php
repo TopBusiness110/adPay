@@ -21,6 +21,16 @@ class AppUserRepository implements AppUserInterface
                                 </button>
                        ';
                 })
+                ->editColumn('type', function ($app_users) {
+                    if ($app_users->type == 'user') {
+                        return 'مستخدم';
+                    } else if ($app_users->type == 'vendor') {
+                        return 'بائع';
+                    } else if ($app_users->type == 'advertise') {
+                        return 'معلن';
+                    }
+                    return;
+                })
                 ->editColumn('image', function ($app_users) {
                     return '
                     <img alt="image" onclick="window.open(this.src)" class="avatar avatar-md rounded-circle" src="' . asset('storage/' . $app_users->image) . '">

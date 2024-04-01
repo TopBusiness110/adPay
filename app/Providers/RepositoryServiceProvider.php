@@ -16,6 +16,17 @@ use App\Interfaces\{AdInterface,
 use App\Interfaces\Api\User\PaymentRepositoryInterface;
 use App\Interfaces\Api\User\UserRepositoryInterface;
 use App\Repository\{AdminRepository,
+    MainInterface,
+    NotificationInterface,
+    OrderInterface,
+    ProductInterface,
+    ShopCategoryInterface
+};
+use App\Models\ShopCategory;
+use App\Repository\{
+    AdminRepository,
+    AuthRepository,
+    UserRepository,
     AdPackageRepository,
     AdRepository,
     Api\Vendor\VendorRepository,
@@ -29,6 +40,13 @@ use App\Repository\{AdminRepository,
 use App\Repository\Api\User\PaymentRepository as PaymentApiRepository;
 use App\Repository\Api\User\UserRepository as UserApiRepository;
 use Illuminate\Support\ServiceProvider;
+    MainRepository,
+    NotificationRepository,
+    OrderRepository,
+    ProductRepository,
+    ShopCategoryRepository
+};
+
 
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -51,6 +69,10 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(AuctionCategoryInterface::class,AuctionCategoryRepository::class);
         $this->app->bind(AuctionSubCategoryInterface::class,AuctionSubCategoryRepository::class);
         $this->app->bind(AuctionInterface::class,AuctionRepository::class);
+        $this->app->bind(NotificationInterface::class,NotificationRepository::class);
+        $this->app->bind(OrderInterface::class,OrderRepository::class);
+        $this->app->bind(ShopCategoryInterface::class,ShopCategoryRepository::class);
+        $this->app->bind(ProductInterface::class,ProductRepository::class);
         // ----------------------------------------------------------------
 
 

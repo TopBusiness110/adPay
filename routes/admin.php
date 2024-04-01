@@ -5,7 +5,6 @@ use Illuminate\Support\Facades\{
     Route,
     Artisan,
 };
-use illuminate\Filesystem\symlink;
 use App\Http\Controllers\Admin\{
     AdController,
     AuthController,
@@ -17,22 +16,10 @@ use App\Http\Controllers\Admin\{
     AuctionCategoryController,
     AuctionController,
     AuctionSubCategoryController,
-    CityController,
-    ConfigCountController,
-    CouponController,
-    InterestController,
-    MsgController,
     NotificationController,
-    PackageController,
-    PackageUserController,
-    SliderController,
-    UserActionController,
-    TubeController,
-    ModelPriceController,
-    PaymentTransactionController,
-    SettingController,
-    WithdrawController,
-    YoutubeKeyController
+    OrderController,
+    ProductController,
+    ShopCategoryController,
 };
 
 Route::group(['prefix' => 'admin'], function () {
@@ -99,6 +86,28 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth:user'], function () {
     Route::get('auctions', [AuctionController::class, 'index'])->name('auctions.index');
     Route::delete('auction/{id}/delete', [AuctionController::class, 'delete'])->name('auction.delete');
 
+    #============================ Notification =====================================
+    Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('notification/create', [NotificationController::class, 'showCreate'])->name('notification.create');
+    Route::post('notification/store', [NotificationController::class, 'store'])->name('notification.store');
+    Route::delete('notification/{id}/delete', [NotificationController::class, 'delete'])->name('notification.delete');
+    Route::get('/get-users', [NotificationController::class, 'getUsers'])->name('get_users');
+
+    #============================ Order =====================================
+    Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::delete('order/{id}/delete', [OrderController::class, 'delete'])->name('order.delete');
+
+    #============================ Shop Category =====================================
+    Route::get('shop_categories', [ShopCategoryController::class, 'index'])->name('shop_categories.index');
+    Route::get('shop_category/create', [ShopCategoryController::class, 'showCreate'])->name('shop_category.create');
+    Route::post('shop_category/store', [ShopCategoryController::class, 'store'])->name('shop_category.store');
+    Route::get('shop_category/{id}/edit', [ShopCategoryController::class, 'showEdit'])->name('shop_category.edit');
+    Route::put('shop_category/update/{id}', [ShopCategoryController::class, 'update'])->name('shop_category.update');
+    Route::delete('shop_category/{id}/delete', [ShopCategoryController::class, 'delete'])->name('shop_category.delete');
+
+    #============================ Product =====================================
+    Route::get('products', [ProductController::class, 'index'])->name('products.index');
+    Route::delete('product/{id}/delete', [ProductController::class, 'delete'])->name('product.delete');
 });
 
 
@@ -115,4 +124,3 @@ Route::get('/clear', function () {
     Artisan::call('storage:link');
     return response()->json(['status' => 'success', 'code' => 1000000000]);
 });
-

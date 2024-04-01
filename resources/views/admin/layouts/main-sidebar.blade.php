@@ -62,6 +62,34 @@
         </li>
 
         <li class="slide">
+            <a class="side-menu__item" href="{{ route('notifications.index') }}">
+                <i class="fa fa-users side-menu__icon"></i>
+                <span class="side-menu__label">الاشعارات</span>
+            </a>
+        </li>
+
+        <li class="slide">
+            <a class="side-menu__item" href="{{ route('orders.index') }}">
+                <i class="fa fa-users side-menu__icon"></i>
+                <span class="side-menu__label">الطلبات</span>
+            </a>
+        </li>
+
+        <li class="slide">
+            <a class="side-menu__item" href="{{ route('shop_categories.index') }}">
+                <i class="fa fa-users side-menu__icon"></i>
+                <span class="side-menu__label">فئات المتاجر</span>
+            </a>
+        </li>
+
+        <li class="slide">
+            <a class="side-menu__item" href="{{ route('products.index') }}">
+                <i class="fa fa-users side-menu__icon"></i>
+                <span class="side-menu__label">المنتجات</span>
+            </a>
+        </li>
+
+        <li class="slide">
             <a class="side-menu__item" href="{{route('admin.logout')}}">
                 <i class="fa fa-lock side-menu__icon"></i>
                 <span class="side-menu__label">تسجيل الخروج</span>
