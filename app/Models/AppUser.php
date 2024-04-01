@@ -2,22 +2,36 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class AppUser extends Model
+class AppUser extends Authenticatable implements JWTSubject
 {
-    use HasFactory;
-
     protected $table = 'app_users';
 
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims(): array
+    {
+        return [];
+    }
     protected $fillable = [
         'name',
         'image',
         'phone',
         'password',
         'type',
-        'token',
+        'device_token',
         'session',
     ];
+
+    public function shop(): HasOne
+    {
+        return $this->hasOne(Shop::class,'vendor_id','id');
+    }
 }

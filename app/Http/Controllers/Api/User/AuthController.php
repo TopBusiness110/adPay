@@ -18,9 +18,9 @@ class AuthController extends Controller
 
     } // constructor
 
-    public function loginWithGoogle(Request $request): JsonResponse
+    public function login(Request $request): JsonResponse
     {
-        return $this->userRepository->loginWithGoogle($request);
+        return $this->userRepository->login($request);
     } // end loginWithGoogle
 
     public function logout(): JsonResponse
@@ -31,6 +31,17 @@ class AuthController extends Controller
     public function deleteUser(): JsonResponse
     {
         return $this->userRepository->deleteAccount();
-    } // end deleteUser 
+    } // end deleteUser
+
+    public function checkUser(Request $request): JsonResponse
+    {
+        return $this->userRepository->checkUser($request);
+    } // checkUser
+
+    public function resetPassword(Request $request): JsonResponse
+    {
+        return $this->userRepository->resetPassword($request);
+    } // resetPassword
+
 
 }

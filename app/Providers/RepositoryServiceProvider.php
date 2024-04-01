@@ -2,37 +2,33 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
-use App\Interfaces\Api\User\UserRepositoryInterface;
-use App\Interfaces\Api\User\PaymentRepositoryInterface;
-use App\Repository\Api\User\UserRepository as UserApiRepository;
-use App\Repository\Api\User\PaymentRepository as PaymentApiRepository;
-
-use App\Interfaces\{
-    AdInterface,
-    AuthInterface,
-    UserInterface,
+use App\Interfaces\{AdInterface,
     AdminInterface,
     AdPackageInterface,
+    Api\Vendor\VendorRepositoryInterface,
     AppUserInterface,
     AuctionCategoryInterface,
     AuctionInterface,
     AuctionSubCategoryInterface,
-    MainInterface
-};
-use App\Repository\{
-    AdminRepository,
-    AuthRepository,
-    UserRepository,
+    AuthInterface,
+    MainInterface,
+    UserInterface};
+use App\Interfaces\Api\User\PaymentRepositoryInterface;
+use App\Interfaces\Api\User\UserRepositoryInterface;
+use App\Repository\{AdminRepository,
     AdPackageRepository,
     AdRepository,
+    Api\Vendor\VendorRepository,
     AppUserRepository,
     AuctionCategoryRepository,
     AuctionRepository,
     AuctionSubCategoryRepository,
-    MainRepository
-};
-
+    AuthRepository,
+    MainRepository,
+    UserRepository};
+use App\Repository\Api\User\PaymentRepository as PaymentApiRepository;
+use App\Repository\Api\User\UserRepository as UserApiRepository;
+use Illuminate\Support\ServiceProvider;
 
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -60,6 +56,7 @@ class RepositoryServiceProvider extends ServiceProvider
 
         // start Api classes and interfaces
         $this->app->bind(UserRepositoryInterface::class,UserApiRepository::class);
+        $this->app->bind(VendorRepositoryInterface::class,VendorRepository::class);
         $this->app->bind(PaymentRepositoryInterface::class,PaymentApiRepository::class);
         // ----------------------------------------------------------------
 

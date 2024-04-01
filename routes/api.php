@@ -3,8 +3,9 @@
 use App\Http\Controllers\Api\User\AuthController;
 use App\Http\Controllers\Api\User\ConfigController;
 use App\Http\Controllers\Api\User\PaymentController;
-use App\Http\Controllers\Api\User\UserController;
+use App\Http\Controllers\Api\Vendor\VendorController;
 use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | |> API Routes
@@ -18,57 +19,43 @@ use Illuminate\Support\Facades\Route;
 
 ############|> START AUTH ROUTES
 Route::group(['prefix' => 'auth'], function () {
-    Route::post('loginWithGoogle', [AuthController::class, 'loginWithGoogle']);
-    Route::post('/checkUser', [UserController::class, 'checkUser']);
-    Route::post('/checkDevice', [UserController::class, 'checkDevice']);
+    Route::post('login', [AuthController::class, 'login'])->name('index');
+    Route::post('checkUser', [AuthController::class, 'checkUser']);
+    Route::post('resetPassword', [AuthController::class, 'resetPassword']);
+
+    Route::group(['middleware' => 'jwt'], function () {
+        #|> Auth Action
+        Route::post('logout', [AuthController::class, 'logout']);
+        Route::post('deleteUser', [AuthController::class, 'deleteUser']);
+    });
 });
 ############|> END AUTH ROUTES
 
+
 ############|> START USER ROUTES
+Route::group(['middleware' => 'jwt', 'prefix' => 'user'], function () {
 
-Route::group(['middleware' => 'jwt'], function () {
-
-    #|> Route HOME & CONFIGURATION
-    Route::get('/getHome', [UserController::class, 'getHome']);
-    Route::get('/configCount', [UserController::class, 'configCount']);
-
-    #|> ROUTE POST DATA
-    Route::post('/addTube', [UserController::class, 'addTube']);
-    Route::post('/addMessage', [UserController::class, 'addMessage']);
-    Route::post('/addChannel', [UserController::class, 'addChannel']);
-    Route::post('/addPointSpin', [UserController::class, 'addPointSpin']);
-    Route::post('/checkPointSpin', [UserController::class, 'checkPointSpin']);
-    Route::post('/addPointCopun', [UserController::class, 'addPointCopun']);
-    Route::post('/getTubeRandom', [UserController::class, 'getTubeRandom']);
-    Route::post('/userViewTube', [UserController::class, 'userViewTube']);
-    Route::post('/addLinkPoints', [UserController::class, 'addLinkPoints']);
-    Route::post('/withdraw', [UserController::class, 'withdraw']);
-
-    #|> ROUTE GET DATA
-    Route::get('/notification', [UserController::class, 'notification']);
-    Route::get('/mySubscribe', [UserController::class, 'mySubscribe']);
-    Route::get('/myViews', [UserController::class, 'myViews']);
-    Route::get('/myProfile', [UserController::class, 'myProfile']);
-    Route::get('/buyCoinsOrMsg', [UserController::class, 'getPageCoinsOrMsg']);
-    Route::get('/getLinkInvite', [UserController::class, 'getLinkInvite']);
-    Route::get('/getVipList', [UserController::class, 'getVipList']);
-    Route::get('/myMessages', [UserController::class, 'myMessages']);
-    Route::get('/getMessages', [UserController::class, 'getMessages']);
-
-    #|> Auth User
-    Route::post('logout', [AuthController::class, 'logout']);
-    Route::post('deleteUser', [AuthController::class, 'deleteUser']);
 });
-
 ############|> END USER ROUTES
 
-############|> START GENERAL ROUTES0
 
-Route::get('getInterests', [ConfigController::class, 'getInterests']);
-Route::get('getCities', [ConfigController::class, 'getCities']);
-Route::get('setting', [ConfigController::class, 'setting']);
+############|> START VENDOR ROUTES
+Route::group(['prefix' => 'vendor'], function () {
+    #|> Vendor Authentication
+    Route::post('register', [VendorController::class, 'register']);
+    Route::get('home', [VendorController::class, 'vendorHome']);
+    Route::get('orders', [VendorController::class, 'orders']);
+    Route::get('order/d/{id}', [VendorController::class, 'orderDetails']);
+    Route::get('myProducts', [VendorController::class, 'myProducts']);
+    Route::post('changOrderStatus', [VendorController::class, 'changOrderStatus']);
+});
 
-############|> END GENERAL ROUTES
+Route::group(['middleware' => 'jwt', 'prefix' => 'vendor'], function () {
+
+});
+
+############|> END VENDOR ROUTES
+
 
 /*
  ? |> START PAYMENT ROUTES
@@ -89,9 +76,9 @@ Route::post('checkout', [PaymentController::class, 'checkout']);
 
 
 ############|> START FCM TEST ROUTES
-Route::post('testFcm',[ConfigController::class,'testFcm']);
+Route::post('testFcm', [ConfigController::class, 'testFcm']);
 ############|> END FCM TEST ROUTES
 
 ############|> START get Active Key ROUTES
-Route::get('getActiveKey',[ConfigController::class,'getActiveKey']);
+Route::get('getActiveKey', [ConfigController::class, 'getActiveKey']);
 ############|> END get Active Key ROUTES

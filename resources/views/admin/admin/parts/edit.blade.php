@@ -33,11 +33,11 @@
                         </div>
                         <div class="form-group">
                             <label for="email" class="form-control-label">Gmail : </label>
-                            <input type="text" class="form-control" value="{{ $userData['gmail'] }}" name="gmail" id="email">
+                            <input type="text" class="form-control" value="{{ $userData['email'] }}" name="gmail" id="email">
                         </div>
                         <div class="form-group">
                             <label for="password" class="form-control-label">كلمة المرور</label>
-                            <input type="password" class="form-control" value="{{ $userData['password'] }}" name="password" id="password">
+                            <input type="password" class="form-control" value="" name="password" id="password">
                         </div>
                         <div class="modal-footer">
                             <a href="{{ route('admin.index') }}" class="btn btn-info text-white">رجوع للخلف</a>

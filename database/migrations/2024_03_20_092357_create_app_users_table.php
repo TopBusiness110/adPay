@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text('password');
             $table->tinyInteger('verified_at')->default(0);
             $table->enum('type',['user','vendor','advertise']);
-            $table->longText('token');
+            $table->longText('device_token');
             $table->longText('session');
             $table->timestamps();
         });
