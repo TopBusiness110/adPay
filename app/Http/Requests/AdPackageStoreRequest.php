@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class SliderStoreRequest extends FormRequest
+class AdPackageStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +24,10 @@ class SliderStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'image' => 'required|image',
-            'link' => 'required',
+            'title_ar' => 'required',
+            'title_en' => 'required',
+            'count' => 'required',
+            'price' => 'required',
         ];
     }
 
@@ -34,7 +36,6 @@ class SliderStoreRequest extends FormRequest
         return [
             'image.required' => 'الصورة مطلوبة',
             'image.image' => 'يجب ان تكون صورة',
-            'link.required' => 'الرابط مطلوب',
         ];
     }
 }

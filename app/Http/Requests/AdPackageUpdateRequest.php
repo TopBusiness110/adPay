@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AreaStoreRequest extends FormRequest
+class AdPackageUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,7 +13,7 @@ class AreaStoreRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return false;
     }
 
     /**
@@ -24,16 +24,7 @@ class AreaStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required',
-            'city_id' => 'required',
-        ];
-    }
-
-    public function messages()
-    {
-        return [
-            'name.required' => 'اسم المنطقة مطلوب',
-            'city_id.required' => 'اسم المدينة مطلوب',
+            //
         ];
     }
 }

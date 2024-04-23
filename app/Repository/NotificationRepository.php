@@ -22,6 +22,11 @@ class NotificationRepository implements NotificationInterface
                                         <i class="fas fa-trash"></i>
                                 </button>
                        ';
+                    })
+                ->editColumn('logo', function ($notifications) {
+                    return '
+                    <img alt="image" onclick="window.open(this.src)" class="avatar avatar-md rounded-circle" src="' . asset('storage/' . $notifications->logo) . '">
+                    ';
                 })
                 ->escapeColumns([])
                 ->make(true);
@@ -37,6 +42,7 @@ class NotificationRepository implements NotificationInterface
 
     public function store($request)
     {
+
         try {
             $inputs = $this->processInputs($request);
 
@@ -63,7 +69,7 @@ class NotificationRepository implements NotificationInterface
     private function uploadImage($request, &$inputs)
     {
         if ($request->hasFile('logo')) {
-            $imagePath = $request->file('logo')->store('uploads/admins', 'public');
+            $imagePath = $request->file('logo')->store('uploads/notification', 'public');
             $inputs['logo'] = $imagePath;
         } else {
             unset($inputs['logo']);

@@ -1,9 +1,9 @@
 @extends('admin/layouts/master')
 
 @section('title')
-    {{($setting->name_en) ?? ''}} | الاشعارات
+    {{($setting->name_en) ?? ''}} | الصور المتحركة
 @endsection
-@section('page_name') الاشعارات @endsection
+@section('page_name') الصور المتحركة @endsection
 @section('content')
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css"
@@ -13,8 +13,8 @@
         <div class="col-md-12 col-lg-12">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title"> الاشعار {{($setting->name_en) ?? ''}}</h3>
-                    <a class="" href="{{ route('notification.create') }}">
+                    <h3 class="card-title"> الصور المتحركة {{($setting->name_en) ?? ''}}</h3>
+                    <a class="" href="{{ route('slider.create') }}">
                         <button class="btn btn-secondary btn-icon text-white addBtn">
 									<span>
 										<i class="fe fe-plus"></i>
@@ -29,11 +29,8 @@
                             <thead>
                             <tr class="fw-bolder text-muted bg-light">
                                 <th class="min-w-25px">#</th>
-                                <th class="min-w-50px">لوجو</th>
-                                <th class="min-w-50px">العنوان</th>
-                                <th class="min-w-50px">النص</th>
-                                <th class="min-w-50px">المستخدم</th>
-                                <th class="min-w-50px">نوع</th>
+                                <th class="min-w-50px">الصورة</th>
+                                <th class="min-w-50px">الحالة</th>
                                 <th class="min-w-50px rounded-end">العمليات</th>
                             </tr>
                             </thead>
@@ -42,6 +39,8 @@
                 </div>
             </div>
         </div>
+
+
         <!--Delete MODAL -->
         <div class="modal fade" id="delete_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
             aria-hidden="true">
@@ -76,16 +75,13 @@
     <script>
         var columns = [
             {data: 'id', name: 'id'},
-            {data: 'logo', name: 'logo'},
-            {data: 'title', name: 'title'},
-            {data: 'body', name: 'body'},
-            {data: 'user_id', name: 'user_id'},
-            {data: 'type', name: 'type'},
+            {data: 'image', name: 'image'},
+            {data: 'status', name: 'status'},
             {data: 'action', name: 'action', orderable: false, searchable: false},
         ]
-        showData('{{route('notifications.index')}}', columns);
+        showData('{{route('sliders.index')}}', columns);
 
-        deleteScript('{{route('notification.delete', ':id')}}');
+        deleteScript('{{route('slider.delete', ':id')}}');
 
 
     </script>

@@ -14,7 +14,7 @@
                     <h3 class="card-title"> اضافةاشعار {{ $setting->name_en ?? '' }}</h3>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="{{ route('notification.store') }}">
+                    <form method="POST" action="{{ route('notification.store') }}" enctype="multipart/form-data">
                         @csrf
                         <div class="form-group">
                             <div class="row">

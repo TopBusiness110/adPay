@@ -19,7 +19,9 @@ use App\Http\Controllers\Admin\{
     NotificationController,
     OrderController,
     ProductController,
+    SettingController,
     ShopCategoryController,
+    SliderController,
 };
 
 Route::group(['prefix' => 'admin'], function () {
@@ -108,6 +110,18 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth:user'], function () {
     #============================ Product =====================================
     Route::get('products', [ProductController::class, 'index'])->name('products.index');
     Route::delete('product/{id}/delete', [ProductController::class, 'delete'])->name('product.delete');
+
+    #============================ Setting =====================================
+    Route::get('setting/index', [SettingController::class, 'showEditSetting'])->name('setting.index');
+    Route::post('setting/update', [SettingController::class, 'updateSetting'])->name('setting.update');
+
+    #============================ Slider =====================================
+    Route::get('sliders', [SliderController::class, 'index'])->name('sliders.index');
+    Route::get('slider/create', [SliderController::class, 'showCreate'])->name('slider.create');
+    Route::post('slider/store', [SliderController::class, 'store'])->name('slider.store');
+    Route::get('slider/{id}/edit', [SliderController::class, 'showEdit'])->name('slider.edit');
+    Route::post('slider/update/{id}', [SliderController::class, 'update'])->name('slider.update');
+    Route::delete('slider/{id}/delete', [SliderController::class, 'delete'])->name('slider.delete');
 });
 
 
