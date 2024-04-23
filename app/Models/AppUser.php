@@ -34,4 +34,9 @@ class AppUser extends Authenticatable implements JWTSubject
     {
         return $this->hasOne(Shop::class,'vendor_id','id');
     }
+
+    public function wallet(): HasOne
+    {
+        return $this->hasOne(Wallet::class,'vendor_id','id');
+    }
 }

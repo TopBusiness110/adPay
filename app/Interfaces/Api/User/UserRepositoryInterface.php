@@ -11,6 +11,12 @@ interface UserRepositoryInterface
      * @param Request $request
      * @return JsonResponse
      */
+    public function register(Request $request): JsonResponse;
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function login(Request $request): JsonResponse;
 
     /**
@@ -34,5 +40,96 @@ interface UserRepositoryInterface
      * @return JsonResponse
      */
     public function resetPassword(Request $request): JsonResponse;
+
+    /**
+     * @return JsonResponse
+     */
+    public function getHome(): JsonResponse;
+
+    /**
+     * @return JsonResponse
+     */
+    public function getCategories(): JsonResponse;
+
+    /**
+     * @return JsonResponse
+     */
+    public function myAddresses(): JsonResponse;
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function addAddress(Request $request): JsonResponse;
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function updateAddress(Request $request): JsonResponse;
+
+    /**
+     * @param $id
+     * @return JsonResponse
+     */
+    public function deleteAddress($id): JsonResponse;
+
+    /**
+     * @return JsonResponse
+     */
+    public function getRegions(): JsonResponse;
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getCityByRegion(Request $request): JsonResponse;
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getProducts(Request $request): JsonResponse;
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getAuctions(Request $request): JsonResponse;
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getShops(Request $request): JsonResponse;
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getAds(Request $request): JsonResponse;
+
+    /**
+     * @param $id
+     * @return JsonResponse
+     */
+    public function productDetails($id): JsonResponse;
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function addToCart(Request $request): JsonResponse;
+
+    /**
+     * @return JsonResponse
+     */
+    public function getCart(): JsonResponse;
+
+    /**
+     * @return JsonResponse
+     */
+    public function auctionDetails($id): JsonResponse;
+
 }
 ###############|> Made By https://github.com/eldapour (eldapour) 🚀

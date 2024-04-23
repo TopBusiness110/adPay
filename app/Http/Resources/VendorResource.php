@@ -16,13 +16,14 @@ class VendorResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'id' =>$this->id,
             'name' =>$this->name,
             'image' =>asset($this->image),
             'phone' =>$this->phone,
             'type' =>$this->type,
             'device_token' =>$this->device_token,
             'session' =>$this->session,
-            'logo' =>asset($this->shop->logo),
+            'logo' => asset($this->shop->logo),
             'banner' =>asset($this->shop->banner),
             'title_ar' =>$this->shop->title_ar,
             'title_en' =>$this->shop->title_en,

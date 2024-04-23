@@ -34,14 +34,18 @@ class ResponseApi
         return substr(str_shuffle($str_result), 0, $length_of_string);
     }
 
-    public function sendFcm($title, $body, $user_id = null, $created = false, $interest_id = null)
+    public function sendFcm($data, $user_id = null, $created = false)
     {
-        $data = array('title' => $title, 'body' => $body);
-        return $this->sendFirebaseNotification($data, $user_id, $created, $interest_id);
+        return $this->sendFirebaseNotification($data, $user_id,$created);
     }
-    public static function uploadImage($image)
+
+    public function sendFcmMsg($data, $user_id)
     {
-        $path = $image->store('uploads/vendors/images', 'public');
+        return $this->sendFirebaseNotification($data, $user_id,true);
+    }
+    public static function uploadImage($image, $folder = null)
+    {
+        $path = $image->store('uploads/'.$folder??'default'.'/images', 'public');
         return '/storage/' . $path;
     }
 }

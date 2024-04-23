@@ -2,32 +2,26 @@
 
 namespace App\Traits;
 
-use App\Models\DeviceToken;
+use App\Models\AppUser;
 use App\Models\Notification;
-use App\Models\User;
 
 trait FirebaseNotification
 {
 
     //firebase server key
-    private string $serverKey = 'AAAADSJHJPw:APA91bEmJEJKIHb30TxM4jXpB-sRsfe3iMvBcv4mhuY2plRkh-iLGtyK-ISk1-7FpCWtzbi761TQmd_PpZJ1sXUz8_Ovhz3JD9e1QdSzeIQZdGW5R3b9daJ5Q2C4tQleH0rgv--iwzl0';
+    protected string $serverKey = 'AAAA4_4xA3o:APA91bFHUAdSecpTOgP0WR_FlX4tC-bRYdZNn0RezY_1dd__1WmdQeDLUzRWaT-mh86cJoRedQL1xh7f2gXFtuQNDTsdS5CFls_cKmhZX5_ztUQm51MqBd8JBEpVV_y1rO_Ftw8XTsTh';
 
 
-    public function sendFirebaseNotification($data, $user_id = null, $created = false,$interest_id = null)
+    public function sendFirebaseNotification($data, $user_id = null,$created = false)
     {
         $url = 'https://fcm.googleapis.com/fcm/send';
 
         if ($user_id != null) {
-            $userIds = User::where('id', '=', $user_id)->pluck('id')->toArray();
-            $tokens = DeviceToken::whereIn('user_id', $userIds)->pluck('token')->toArray();
-        } else {
-            if ($interest_id != null) {
-                $userIds = User::where('intrest_id',$interest_id)->pluck('id')->toArray();
-            }else {
-                $userIds = User::pluck('id')->toArray();
-            }
-            $tokens = DeviceToken::whereIn('user_id', $userIds)->pluck('token')->toArray();
+            $tokens = AppUser::whereId($user_id)->pluck('device_token')->toArray();
+        }else {
+            $tokens = AppUser::get()->pluck('device_token')->toArray();
         }
+
 
         if (!$created) {
             //|> start notification store
@@ -35,13 +29,17 @@ trait FirebaseNotification
             $createNotification->title = $data['title'];
             $createNotification->description = $data['body'];
             $createNotification->user_id = $user_id ?? null;
+            $createNotification->type = $user_type ?? null;
             $createNotification->save();
         }
 
         $fields = array(
             'registration_ids' => $tokens,
-            'data' => ["note_type" => "notification"],
-            'notification' => $data
+            'notification' => $data,
+            'data' => [
+                "note_type" => "notification",
+                "message" => isset($data['msg']) ? $data['msg'] : []
+            ]
         );
         $fields = json_encode($fields);
 

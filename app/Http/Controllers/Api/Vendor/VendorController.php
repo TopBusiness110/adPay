@@ -14,7 +14,7 @@ class VendorController extends Controller
 
     public function __construct(VendorRepositoryInterface $vendorRepository)
     {
-       return $this->vendorRepository = $vendorRepository;
+        return $this->vendorRepository = $vendorRepository;
     } #|> constructor
 
     public function register(Request $request): JsonResponse
@@ -26,23 +26,33 @@ class VendorController extends Controller
     {
         return $this->vendorRepository->vendorHome();
     } #|> vendorHome
-    public function orders(Request $request): JsonResponse
-    {
-        return $this->vendorRepository->orders($request);
-    } #|> orders
-    public function orderDetails($id): JsonResponse
-    {
-        return $this->vendorRepository->orderDetails($id);
-    } #|> orderDetails
-    public function changOrderStatus(Request $request): JsonResponse
-    {
-        return $this->vendorRepository->changOrderStatus($request);
-    } #|> orderDetails
-    public function myProducts(Request $request): JsonResponse
-    {
-        return $this->vendorRepository->myProducts($request);
-    } #|> myProducts
 
+    public function getNotifications(): JsonResponse
+    {
+        return $this->vendorRepository->getNotifications();
+    } #|> getNotifications
+
+    public function getChatRoom(): JsonResponse
+    {
+        return $this->vendorRepository->getChatRoom();
+    } #|> getChatRoom
+    public function getRoom($user_id): JsonResponse
+    {
+        return $this->vendorRepository->getRoom($user_id);
+    } #|> sendMessage
+     public function sendMessage(Request $request,$id): JsonResponse
+    {
+        return $this->vendorRepository->sendMessage($request,$id);
+    } #|> sendMessage
+public function updateSeen(): JsonResponse
+    {
+        return $this->vendorRepository->updateSeen();
+    } #|> sendMessage
+
+    public function myWallet(): JsonResponse
+    {
+        return $this->vendorRepository->myWallet();
+    } #|> myWallet
 
 
 }

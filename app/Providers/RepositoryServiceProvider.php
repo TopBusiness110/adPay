@@ -1,52 +1,44 @@
 <?php
 
 namespace App\Providers;
-
-use App\Interfaces\{AdInterface,
-    AdminInterface,
-    AdPackageInterface,
-    Api\Vendor\VendorRepositoryInterface,
-    AppUserInterface,
-    AuctionCategoryInterface,
-    AuctionInterface,
-    AuctionSubCategoryInterface,
-    AuthInterface,
-    MainInterface,
-    UserInterface};
-use App\Interfaces\Api\User\PaymentRepositoryInterface;
-use App\Interfaces\Api\User\UserRepositoryInterface;
-use App\Repository\{AdminRepository,
-    MainInterface,
-    NotificationInterface,
-    OrderInterface,
-    ProductInterface,
-    ShopCategoryInterface
-};
+use App\Interfaces\AdInterface;
+use App\Interfaces\AdminInterface;
+use App\Interfaces\AdPackageInterface;
+use App\Interfaces\AppUserInterface;
+use App\Interfaces\AuctionCategoryInterface;
+use App\Interfaces\AuctionInterface;
+use App\Interfaces\AuctionSubCategoryInterface;
+use App\Interfaces\AuthInterface;
+use App\Interfaces\MainInterface;
+use App\Interfaces\NotificationInterface;
+use App\Interfaces\OrderInterface;
+use App\Interfaces\ProductInterface;
+use App\Interfaces\ShopCategoryInterface;
+use App\Interfaces\UserInterface;
+use App\Repository\AdminRepository;
+use App\Repository\AdPackageRepository;
+use App\Repository\AdRepository;
+use App\Repository\AppUserRepository;
+use App\Repository\AuctionCategoryRepository;
+use App\Repository\AuctionRepository;
+use App\Repository\AuctionSubCategoryRepository;
+use App\Repository\AuthRepository;
+use App\Repository\MainRepository;
+use App\Repository\NotificationRepository;
+use App\Repository\OrderRepository;
+use App\Repository\ProductRepository;
+use App\Repository\ShopCategoryRepository;
+use App\Repository\UserRepository;
+use Illuminate\Support\ServiceProvider;
 use App\Models\ShopCategory;
-use App\Repository\{
-    AdminRepository,
-    AuthRepository,
-    UserRepository,
-    AdPackageRepository,
-    AdRepository,
-    Api\Vendor\VendorRepository,
-    AppUserRepository,
-    AuctionCategoryRepository,
-    AuctionRepository,
-    AuctionSubCategoryRepository,
-    AuthRepository,
-    MainRepository,
-    UserRepository};
+
+//api
 use App\Repository\Api\User\PaymentRepository as PaymentApiRepository;
 use App\Repository\Api\User\UserRepository as UserApiRepository;
-use Illuminate\Support\ServiceProvider;
-    MainRepository,
-    NotificationRepository,
-    OrderRepository,
-    ProductRepository,
-    ShopCategoryRepository
-};
-
+use App\Repository\Api\Vendor\VendorRepository;
+use App\Interfaces\Api\User\PaymentRepositoryInterface;
+use App\Interfaces\Api\User\UserRepositoryInterface;
+use App\Interfaces\Api\Vendor\VendorRepositoryInterface;
 
 
 class RepositoryServiceProvider extends ServiceProvider

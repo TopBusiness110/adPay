@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Auction extends Model
 {
@@ -24,6 +25,10 @@ class Auction extends Model
         'sub_cat_id',
     ];
 
+    protected $casts = [
+        'images' => 'array',
+    ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(AppUser::class)->where('type', 'user');
@@ -37,5 +42,10 @@ class Auction extends Model
     public function auctionSubCategory(): BelongsTo
     {
         return $this->belongsTo(AuctionSubCategory::class, 'sub_cat_id', 'id');
+    }
+
+    public function comments(): HasMany
+    {
+        return $this->hasMany(AuctionComment::class, 'auction_id', 'id')->where('type', 'comment');
     }
 }
