@@ -28,6 +28,9 @@
 
 <!--- FONT-ICONS CSS -->
 <link href="{{asset('assets/admin/assets/css/icons.css')}}" rel="stylesheet"/>
+<!-- simple-tags CSS -->
+
+
 
 <!-- SIDEBAR CSS -->
 <link href="{{asset('assets/admin')}}/assets/plugins/sidebar/sidebar.css" rel="stylesheet">

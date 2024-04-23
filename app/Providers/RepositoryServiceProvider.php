@@ -22,11 +22,13 @@ use App\Interfaces\{
     NotificationInterface,
     OrderInterface,
     ProductInterface,
-    ShopCategoryInterface
+    SettingInterface,
+    ShopCategoryInterface,
+    SliderInterface
 };
 use App\Models\ShopCategory;
-use App\Repository\{
-    AdminRepository,
+use App\Repository\{AdminRepository,
+    Api\User\AuctionCommentRepository,
     AuthRepository,
     UserRepository,
     AdPackageRepository,
@@ -39,8 +41,9 @@ use App\Repository\{
     NotificationRepository,
     OrderRepository,
     ProductRepository,
-    ShopCategoryRepository
-};
+    SettingRepository,
+    ShopCategoryRepository,
+    SliderRepository};
 
 
 
@@ -68,12 +71,15 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(OrderInterface::class,OrderRepository::class);
         $this->app->bind(ShopCategoryInterface::class,ShopCategoryRepository::class);
         $this->app->bind(ProductInterface::class,ProductRepository::class);
+        $this->app->bind(SettingInterface::class,SettingRepository::class);
+        $this->app->bind(SliderInterface::class,SliderRepository::class);
         // ----------------------------------------------------------------
 
 
         // start Api classes and interfaces
         $this->app->bind(UserRepositoryInterface::class,UserApiRepository::class);
         $this->app->bind(PaymentRepositoryInterface::class,PaymentApiRepository::class);
+        $this->app->bind(AuctionCategoryInterface::class,AuctionCommentRepository::class);
         // ----------------------------------------------------------------
 
     }

@@ -55,6 +55,15 @@ Route::group(['middleware' => 'jwt'], function () {
     Route::get('/myMessages', [UserController::class, 'myMessages']);
     Route::get('/getMessages', [UserController::class, 'getMessages']);
 
+
+    #|> ROUTE STORE COMMENT
+
+
+
+
+
+
+
     #|> Auth User
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('deleteUser', [AuthController::class, 'deleteUser']);

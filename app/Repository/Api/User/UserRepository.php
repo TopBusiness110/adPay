@@ -955,9 +955,11 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
      */
     public function checkUser(Request $request): JsonResponse
     {
+        //return self::returnResponseDataApi('good',$request);
+
         try {
-            $gmail = $request->gmail;
-            $checkUser = User::where('gmail', $gmail)->first();
+            $gmail = $request->email;
+            $checkUser = User::where('email', $gmail)->first();
             if ($checkUser) {
                 return self::returnResponseDataApi(['status' => 1], 'هذا الحساب موجود في قواعد البيانات');
             } else {
@@ -978,6 +980,7 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
     {
         try {
             $data = [];
+
             $deviceId = GoogleDeviceId::query()
                 ->select('device_id', 'gmail')
                 ->where('device_id', $request->device_id)

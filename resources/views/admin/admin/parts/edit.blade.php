@@ -33,7 +33,7 @@
                         </div>
                         <div class="form-group">
                             <label for="email" class="form-control-label">Gmail : </label>
-                            <input type="text" class="form-control" value="{{ $userData['gmail'] }}" name="gmail" id="email">
+                            <input type="text" class="form-control" value="{{ $userData['email'] }}" name="gmail" id="email">
                         </div>
                         <div class="form-group">
                             <label for="password" class="form-control-label">كلمة المرور</label>

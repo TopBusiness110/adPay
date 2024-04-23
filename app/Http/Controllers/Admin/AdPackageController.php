@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AdPackageStoreRequest;
 use App\Interfaces\AdPackageInterface;
+use App\Models\AdPackage;
 use Illuminate\Http\Request;
 
 class AdPackageController extends Controller
@@ -25,13 +27,15 @@ class AdPackageController extends Controller
         return $this->adPackageInterface->showCreate();
     }
 
-    public function store(Request $request)
+    public function store(AdPackageStoreRequest $request)
     {
         return $this->adPackageInterface->store($request);
     }
 
     public function showEdit($id)
     {
+
+
         return $this->adPackageInterface->showEdit($id);
     }
 

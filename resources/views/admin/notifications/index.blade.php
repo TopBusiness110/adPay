@@ -77,7 +77,7 @@
         var columns = [
             {data: 'id', name: 'id'},
             {data: 'logo', name: 'logo'},
-            {data: 'title_ar', name: 'title'},
+            {data: 'title', name: 'title'},
             {data: 'body', name: 'body'},
             {data: 'user_id', name: 'user_id'},
             {data: 'type', name: 'type'},
@@ -87,7 +87,7 @@
 
         deleteScript('{{route('notification.delete', ':id')}}');
 
-        
+
     </script>
 @endsection
 

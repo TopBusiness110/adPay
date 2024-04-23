@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class AuctionComment extends Model
 {
     use HasFactory;
+
+    protected $fillable =['auction_id', 'user_id', 'to_user_id', 'comment', 'type'];
 }

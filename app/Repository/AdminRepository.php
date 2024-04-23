@@ -74,6 +74,8 @@ class AdminRepository implements AdminInterface
     }
 
     public function storeAdmin($request)
+
+
     {
         try {
             $inputs = $this->processInputs($request);
@@ -113,6 +115,7 @@ class AdminRepository implements AdminInterface
 
     private function createAdminUser($inputs)
     {
+//        return $inputs;
         return User::create($inputs);
     }
 
