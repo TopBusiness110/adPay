@@ -22,10 +22,12 @@ class AdminRequest extends FormRequest
      *
      * @return array
      */
+
     public function rules()
     {
+
         return [
-            'gmail'     => 'required|email|unique:users,gmail,'.$this->id,
+            'email'     => 'required|email|unique:users,email,'.$this->id,
             'name'      => 'required',
             'password'  => 'required_without:id'.request()->isMethod('put') ? '' : '|min:6',
             'image'     => 'mimes:jpeg,jpg,png,gif,webp',

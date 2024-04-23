@@ -24,10 +24,17 @@ class Ad extends Model
         'views',
         'complete',
         'video',
+        'payment_status',
+        'package_id'
     ];
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(AppUser::class)->where('type', 'user');
+    }
+
+    public function package(): BelongsTo
+    {
+        return $this->belongsTo(AdPackage::class,'package_id','id')->select('id','count','price');
     }
 }

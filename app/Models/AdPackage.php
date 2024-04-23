@@ -12,8 +12,6 @@ class AdPackage extends Model
     protected $table = 'ad_packages';
 
     protected $fillable = [
-        'title_ar',
-        'title_en',
         'count',
         'price',
     ];
