@@ -16,119 +16,91 @@ class UserController extends Controller
         $this->userRepositoryInterface = $userRepositoryInterface;
     } #|> constructor
 
+    public function register(Request $request): JsonResponse
+    {
+        return $this->userRepositoryInterface->register($request);
+    } #|> register
+
     public function getHome(): JsonResponse
     {
         return $this->userRepositoryInterface->getHome();
-    } #|> getHome
+    } #|> home
 
-    public function configCount(Request $request): JsonResponse
+    public function getCategories(): JsonResponse
     {
-        return $this->userRepositoryInterface->configCount($request);
-    } #|> config count actions
+        return $this->userRepositoryInterface->getCategories();
+    } #|> getCategories
 
-    public function addTube(Request $request): JsonResponse
+    public function myAddresses(): JsonResponse
     {
-        return $this->userRepositoryInterface->addTube($request);
-    } #|> add tubes
+        return $this->userRepositoryInterface->myAddresses();
+    } #|> myAddresses
 
-    public function addMessage(Request $request): JsonResponse
+    public function addAddress(Request $request): JsonResponse
     {
-        return $this->userRepositoryInterface->addMessage($request);
-    } #|> add message
+        return $this->userRepositoryInterface->addAddress($request);
+    } #|>  addAddress
 
-    public function notification(): JsonResponse
+    public function updateAddress(Request $request): JsonResponse
     {
-        return $this->userRepositoryInterface->notification();
-    } #|> notification
+        return $this->userRepositoryInterface->updateAddress($request);
+    } #|>  updateAddress
 
-    public function mySubscribe(): JsonResponse
+    public function deleteAddress($id): JsonResponse
     {
-        return $this->userRepositoryInterface->mySubscribe();
-    } #|> my subscribe
+        return $this->userRepositoryInterface->deleteAddress($id);
+    } #|>  deleteAddress
 
-    public function myViews(): JsonResponse
+    public function getRegions(): JsonResponse
     {
-        return $this->userRepositoryInterface->myViews();
-    } #|> my views
+        return $this->userRepositoryInterface->getRegions();
+    } #|>  getRegions
 
-    public function myProfile(): JsonResponse
+    public function getCityByRegion(Request $request): JsonResponse
     {
-        return $this->userRepositoryInterface->myProfile();
-    } #|> my profile
+        return $this->userRepositoryInterface->getCityByRegion($request);
+    } #|>  getCityByRegion
 
-    public function addChannel(Request $request): JsonResponse
+    public function getProducts(Request $request): JsonResponse
     {
-        return $this->userRepositoryInterface->addChannel($request);
-    } #|> my views
+        return $this->userRepositoryInterface->getProducts($request);
+    } #|>  getProducts
 
-    public function getPageCoinsOrMsg(Request $request): JsonResponse
+    public function getAuctions(Request $request): JsonResponse
     {
-        return $this->userRepositoryInterface->getPageCoinsOrMsg($request);
-    } #|> my views
+        return $this->userRepositoryInterface->getAuctions($request);
+    } #|>  getProducts
 
-    public function getVipList(): JsonResponse
+    public function getShops(Request $request): JsonResponse
     {
-        return $this->userRepositoryInterface->getVipList();
-    } #|> get Vip List
+        return $this->userRepositoryInterface->getShops($request);
+    } #|>  getShops
 
-    public function getLinkInvite(): JsonResponse
+    public function getAds(Request $request): JsonResponse
     {
-        return $this->userRepositoryInterface->getLinkInvite();
-    } #|> get Link Invite
+        return $this->userRepositoryInterface->getAds($request);
+    } #|>  getAds
 
-    public function addLinkPoints(Request $request): JsonResponse
+    public function productDetails($id): JsonResponse
     {
-        return $this->userRepositoryInterface->AddLinkPoints($request);
-    } #|> get Link Invite
+        return $this->userRepositoryInterface->productDetails($id);
+    } #|>  productDetails
 
-    public function addPointSpin(Request $request): JsonResponse
+    public function auctionDetails($id): JsonResponse
     {
-        return $this->userRepositoryInterface->addPointSpin($request);
-    } #|> addPointSpin
+        return $this->userRepositoryInterface->auctionDetails($id);
+    } #|>  auctionDetails
 
-    public function checkPointSpin(): JsonResponse
+    public function addToCart(Request $request): JsonResponse
     {
-        return $this->userRepositoryInterface->checkPointSpin();
-    } #|> addPointSpin
+        return $this->userRepositoryInterface->addToCart($request);
+    } #|>  addToCart
 
-    public function addPointCopun(Request $request): JsonResponse
+    public function getCart(): JsonResponse
     {
-        return $this->userRepositoryInterface->addPointCopun($request);
-    } #|> addPointCopun
+        return $this->userRepositoryInterface->getCart();
+    } #|>  getCart
 
-    public function getTubeRandom(Request $request): JsonResponse
-    {
-        return $this->userRepositoryInterface->getTubeRandom($request);
-    } #|> get tube random
-
-    public function myMessages()
-    {
-        return $this->userRepositoryInterface->myMessages();
-    } #|> user messages
-
-    public function getMessages()
-    {
-        return $this->userRepositoryInterface->getMessages();
-    } #|> get messages
-
-    public function userViewTube(Request $request)
-    {
-        return $this->userRepositoryInterface->userViewTube($request);
-    } #|> userViewTube
-
-    public function checkUser(Request $request)
-    {
-        return $this->userRepositoryInterface->checkUser($request);
-    } #|> check user
-    public function checkDevice(Request $request)
-    {
-        return $this->userRepositoryInterface->checkDevice($request);
-    } #|> check user
-
-    public function withdraw(Request $request)
-    {
-        return $this->userRepositoryInterface->withdraw($request);
-    } #|> withdraw user
 
 }
 ###############|> Made By https://github.com/eldapour (eldapour) 🚀

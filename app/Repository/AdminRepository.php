@@ -16,13 +16,17 @@ class AdminRepository implements AdminInterface
             $admins = User::get();
             return DataTables::of($admins)
                 ->addColumn('action', function ($admins) {
-                    return '
+                    if ($admins->id == 1){
+                        return '';
+                    }else{
+                        return '
                             <a href="' . route('admin.edit', $admins->id) . '" class="btn btn-pill btn-info-light"><i class="fa fa-edit"></i></a>
                             <button class="btn btn-pill btn-danger-light" data-toggle="modal" data-target="#delete_modal"
                                         data-id="' . $admins->id . '" data-title="' . $admins->name . '">
                                         <i class="fas fa-trash"></i>
                                 </button>
                        ';
+                    }
                 })
                 ->editColumn('image', function ($admins) {
                     return '
@@ -113,7 +117,7 @@ class AdminRepository implements AdminInterface
         }
     }
 
-    private function createAdminUser($inputs)
+    private function createAdminUser($inputs): User
     {
 //        return $inputs;
         return User::create($inputs);

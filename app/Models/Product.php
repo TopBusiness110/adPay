@@ -8,9 +8,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Product extends Model
 {
-    use HasFactory;
-
     protected $table = 'products';
+
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(AppUser::class, 'vendor_id', 'id');
+    }
 
     protected $fillable = [
         'vendor_id',
@@ -28,13 +31,18 @@ class Product extends Model
         'props',
     ];
 
-    public function vendor() : BelongsTo
+    protected $casts = [
+        'props' => 'array',
+        'images' => 'array',
+    ];
+
+    public function vendor(): BelongsTo
     {
-        return $this->belongsTo(AppUser::class,'vendor_id', 'id')->where('type', 'vendor');
+        return $this->belongsTo(AppUser::class, 'vendor_id', 'id')->where('type', 'vendor');
     }
 
-    public function shopCategory() : BelongsTo
+    public function shopCategory(): BelongsTo
     {
-        return $this->belongsTo(ShopCategory::class,'shop_cat_id', 'id');
+        return $this->belongsTo(ShopCategory::class, 'shop_cat_id', 'id');
     }
 }

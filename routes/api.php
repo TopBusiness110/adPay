@@ -4,7 +4,12 @@ use App\Http\Controllers\Api\User\AuthController;
 use App\Http\Controllers\Api\User\ConfigController;
 use App\Http\Controllers\Api\User\PaymentController;
 use App\Http\Controllers\Api\User\UserController;
+use App\Http\Controllers\Api\Vendor\AdController;
+use App\Http\Controllers\Api\Vendor\OrderController;
+use App\Http\Controllers\Api\Vendor\ProductController;
+use App\Http\Controllers\Api\Vendor\VendorController;
 use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | |> API Routes
@@ -18,66 +23,113 @@ use Illuminate\Support\Facades\Route;
 
 ############|> START AUTH ROUTES
 Route::group(['prefix' => 'auth'], function () {
-    Route::post('loginWithGoogle', [AuthController::class, 'loginWithGoogle']);
-    Route::post('/checkUser', [UserController::class, 'checkUser']);
-    Route::post('/checkDevice', [UserController::class, 'checkDevice']);
+    Route::post('login', [AuthController::class, 'login'])->name('index');
+    Route::post('checkUser', [AuthController::class, 'checkUser']);
+    Route::post('resetPassword', [AuthController::class, 'resetPassword']);
+
+    Route::group(['middleware' => 'jwt'], function () {
+        #|> Auth Action
+        Route::post('logout', [AuthController::class, 'logout']);
+        Route::post('deleteUser', [AuthController::class, 'deleteUser']);
+    });
 });
 ############|> END AUTH ROUTES
 
+
 ############|> START USER ROUTES
+Route::group(['prefix' => 'user'], function () {
+    #|> User Authentication
+    Route::post('register', [UserController::class, 'register']);
 
-Route::group(['middleware' => 'jwt'], function () {
+    #|> User Actions
+    Route::group(['middleware' => 'jwt'],function () {
+        Route::get('getHome', [UserController::class, 'getHome']);
+        Route::get('getCategories', [UserController::class, 'getCategories']);
+        Route::get('getRegions', [UserController::class, 'getRegions']);
+        Route::get('getCityByRegion', [UserController::class, 'getCityByRegion']);
+        Route::get('getProducts', [UserController::class, 'getProducts']);
+        Route::get('getAuctions', [UserController::class, 'getAuctions']);
+        Route::get('getShops', [UserController::class, 'getShops']);
+        Route::get('getAds', [UserController::class, 'getAds']);
+        Route::get('productDetails/{id}', [UserController::class, 'productDetails']);
+        Route::get('auctionDetails/{id}', [UserController::class, 'auctionDetails']);
 
-    #|> Route HOME & CONFIGURATION
-    Route::get('/getHome', [UserController::class, 'getHome']);
-    Route::get('/configCount', [UserController::class, 'configCount']);
+        Route::post('addToCart', [UserController::class, 'addToCart']);
+        Route::get('getCart', [UserController::class, 'getCart']);
 
-    #|> ROUTE POST DATA
-    Route::post('/addTube', [UserController::class, 'addTube']);
-    Route::post('/addMessage', [UserController::class, 'addMessage']);
-    Route::post('/addChannel', [UserController::class, 'addChannel']);
-    Route::post('/addPointSpin', [UserController::class, 'addPointSpin']);
-    Route::post('/checkPointSpin', [UserController::class, 'checkPointSpin']);
-    Route::post('/addPointCopun', [UserController::class, 'addPointCopun']);
-    Route::post('/getTubeRandom', [UserController::class, 'getTubeRandom']);
-    Route::post('/userViewTube', [UserController::class, 'userViewTube']);
-    Route::post('/addLinkPoints', [UserController::class, 'addLinkPoints']);
-    Route::post('/withdraw', [UserController::class, 'withdraw']);
-
-    #|> ROUTE GET DATA
-    Route::get('/notification', [UserController::class, 'notification']);
-    Route::get('/mySubscribe', [UserController::class, 'mySubscribe']);
-    Route::get('/myViews', [UserController::class, 'myViews']);
-    Route::get('/myProfile', [UserController::class, 'myProfile']);
-    Route::get('/buyCoinsOrMsg', [UserController::class, 'getPageCoinsOrMsg']);
-    Route::get('/getLinkInvite', [UserController::class, 'getLinkInvite']);
-    Route::get('/getVipList', [UserController::class, 'getVipList']);
-    Route::get('/myMessages', [UserController::class, 'myMessages']);
-    Route::get('/getMessages', [UserController::class, 'getMessages']);
-
-
-    #|> ROUTE STORE COMMENT
-
-
-
-
-
-
-
-    #|> Auth User
-    Route::post('logout', [AuthController::class, 'logout']);
-    Route::post('deleteUser', [AuthController::class, 'deleteUser']);
+        // ADDRESS API
+        Route::get('myAddresses', [UserController::class, 'myAddresses']);
+        Route::post('addAddress', [UserController::class, 'addAddress']);
+        Route::post('updateAddress', [UserController::class, 'updateAddress']);
+        Route::post('deleteAddress/{id}', [UserController::class, 'deleteAddress']);
+    });
 });
-
 ############|> END USER ROUTES
 
-############|> START GENERAL ROUTES0
 
-Route::get('getInterests', [ConfigController::class, 'getInterests']);
-Route::get('getCities', [ConfigController::class, 'getCities']);
-Route::get('setting', [ConfigController::class, 'setting']);
 
-############|> END GENERAL ROUTES
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+############|> START VENDOR ROUTES
+Route::group(['prefix' => 'vendor'], function () {
+    #|> Vendor Authentication
+    Route::post('register', [VendorController::class, 'register']);
+
+    #|> Vendor Actions
+    Route::group(['middleware' => 'jwt'],function () {
+        Route::get('home', [VendorController::class, 'vendorHome']);
+        Route::get('getNotifications', [VendorController::class, 'getNotifications']);
+        Route::get('getChatRooms', [VendorController::class, 'getChatRoom']);
+        Route::get('getRoom/{id}', [VendorController::class, 'getRoom']);
+        Route::post('room/{id}/sendMessage', [VendorController::class, 'sendMessage']);
+        Route::post('room/updateSeen', [VendorController::class, 'updateSeen']);
+        Route::get('myWallet', [VendorController::class, 'myWallet']);
+
+        // products
+        Route::post('addProduct', [ProductController::class, 'addProduct']);
+        Route::post('updateProduct', [ProductController::class, 'updateProduct']);
+        Route::post('deleteProduct', [ProductController::class, 'deleteProduct']);
+        Route::get('productDetails/{id}', [ProductController::class, 'productDetails']);
+        Route::get('myProducts', [ProductController::class, 'myProducts']);
+        Route::get('getShopCategories', [ProductController::class, 'getShopCategories']);
+        Route::get('getShopSubCategories', [ProductController::class, 'getShopSubCategories']);
+
+        //advertises
+        Route::post('addAdvertise', [AdController::class, 'addAdvertise']);
+        Route::get('myAdvertise', [AdController::class, 'myAdvertise']);
+        Route::get('getAdPackages', [AdController::class, 'getAdPackages']);
+
+        // orders
+        Route::get('orders', [OrderController::class, 'orders']);
+        Route::post('changOrderStatus', [OrderController::class, 'changOrderStatus']);
+        Route::get('order/d/{id}', [OrderController::class, 'orderDetails']);
+    });
+});
+
+Route::group(['middleware' => 'jwt', 'prefix' => 'vendor'], function () {
+
+});
+
+############|> END VENDOR ROUTES
+
 
 /*
  ? |> START PAYMENT ROUTES
@@ -98,9 +150,9 @@ Route::post('checkout', [PaymentController::class, 'checkout']);
 
 
 ############|> START FCM TEST ROUTES
-Route::post('testFcm',[ConfigController::class,'testFcm']);
+Route::post('testFcm', [ConfigController::class, 'testFcm']);
 ############|> END FCM TEST ROUTES
 
 ############|> START get Active Key ROUTES
-Route::get('getActiveKey',[ConfigController::class,'getActiveKey']);
+Route::get('getActiveKey', [ConfigController::class, 'getActiveKey']);
 ############|> END get Active Key ROUTES

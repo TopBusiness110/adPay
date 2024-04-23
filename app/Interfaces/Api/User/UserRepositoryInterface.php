@@ -11,7 +11,13 @@ interface UserRepositoryInterface
      * @param Request $request
      * @return JsonResponse
      */
-    public function loginWithGoogle(Request $request): JsonResponse;
+    public function register(Request $request): JsonResponse;
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function login(Request $request): JsonResponse;
 
     /**
      * @return JsonResponse
@@ -24,14 +30,16 @@ interface UserRepositoryInterface
     public function deleteAccount(): JsonResponse;
 
     /**
-     * @return JsonResponse
+     * @param Request $request
+     * @return mixed
      */
-    public function getInterests(): JsonResponse;
+    public function checkUser(Request $request): JsonResponse;
 
     /**
+     * @param Request $request
      * @return JsonResponse
      */
-    public function getCities(): JsonResponse;
+    public function resetPassword(Request $request): JsonResponse;
 
     /**
      * @return JsonResponse
@@ -39,134 +47,89 @@ interface UserRepositoryInterface
     public function getHome(): JsonResponse;
 
     /**
-     * @param Request $request
      * @return JsonResponse
      */
-    public function configCount(Request $request): JsonResponse;
+    public function getCategories(): JsonResponse;
+
+    /**
+     * @return JsonResponse
+     */
+    public function myAddresses(): JsonResponse;
 
     /**
      * @param Request $request
      * @return JsonResponse
      */
-    public function addTube(Request $request): JsonResponse;
-
-    /**
-     * addMessage function
-     *
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function addMessage(Request $request): JsonResponse;
-
-    /**
-     * @return JsonResponse
-     */
-    public function setting(): JsonResponse;
-
-    /**
-     * @return JsonResponse
-     */
-    public function notification(): JsonResponse;
-
-    /**
-     * @return JsonResponse
-     */
-    public function mySubscribe(): JsonResponse;
-
-    /**
-     * @return JsonResponse
-     */
-    public function myViews(): JsonResponse;
-
-    /**
-     * @return JsonResponse
-     */
-    public function myMessages(): JsonResponse;
-
-    /**
-     * @return JsonResponse
-     */
-    public function getMessages(): JsonResponse;
-
-    /**
-     * @return JsonResponse
-     */
-    public function myProfile(): JsonResponse;
+    public function addAddress(Request $request): JsonResponse;
 
     /**
      * @param Request $request
      * @return JsonResponse
      */
-    public function addChannel(Request $request): JsonResponse;
+    public function updateAddress(Request $request): JsonResponse;
+
+    /**
+     * @param $id
+     * @return JsonResponse
+     */
+    public function deleteAddress($id): JsonResponse;
+
+    /**
+     * @return JsonResponse
+     */
+    public function getRegions(): JsonResponse;
 
     /**
      * @param Request $request
      * @return JsonResponse
      */
-    public function getPageCoinsOrMsg(Request $request): JsonResponse;
-
-    /**
-     * @return JsonResponse
-     */
-    public function getLinkInvite(): JsonResponse;
+    public function getCityByRegion(Request $request): JsonResponse;
 
     /**
      * @param Request $request
      * @return JsonResponse
      */
-    public function AddLinkPoints(Request $request): JsonResponse;
-
-    /**
-     * @return JsonResponse
-     */
-    public function getVipList(): JsonResponse;
+    public function getProducts(Request $request): JsonResponse;
 
     /**
      * @param Request $request
      * @return JsonResponse
      */
-    public function addPointSpin(Request $request): JsonResponse;
-
-    /**
-     * @return JsonResponse
-     */
-    public function checkPointSpin(): JsonResponse;
+    public function getAuctions(Request $request): JsonResponse;
 
     /**
      * @param Request $request
      * @return JsonResponse
      */
-    public function addPointCopun(Request $request): JsonResponse;
+    public function getShops(Request $request): JsonResponse;
 
     /**
      * @param Request $request
      * @return JsonResponse
      */
-    public function getTubeRandom(Request $request): JsonResponse;
+    public function getAds(Request $request): JsonResponse;
+
+    /**
+     * @param $id
+     * @return JsonResponse
+     */
+    public function productDetails($id): JsonResponse;
 
     /**
      * @param Request $request
      * @return JsonResponse
      */
-    public function userViewTube(Request $request):  JsonResponse;
+    public function addToCart(Request $request): JsonResponse;
 
     /**
-     * @param Request $request
      * @return JsonResponse
      */
-    public function checkUser(Request $request):  JsonResponse;
-
+    public function getCart(): JsonResponse;
 
     /**
-     * @param Request $request
      * @return JsonResponse
      */
-    public function checkDevice(Request $request):  JsonResponse;
+    public function auctionDetails($id): JsonResponse;
 
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function withdraw(Request $request): JsonResponse;
 }
 ###############|> Made By https://github.com/eldapour (eldapour) 🚀

@@ -3,7 +3,7 @@
         'name' => 'laravel/laravel',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '0cc3656468e8c376908273b84d7d3c7da3008118',
+        'reference' => 'c4158f1b9724014c7709fe29f2a6cd509c2edde0',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -496,7 +496,7 @@
         'laravel/laravel' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '0cc3656468e8c376908273b84d7d3c7da3008118',
+            'reference' => 'c4158f1b9724014c7709fe29f2a6cd509c2edde0',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -548,18 +548,18 @@
             'dev_requirement' => false,
         ),
         'lcobucci/clock' => array(
-            'pretty_version' => '2.3.0',
-            'version' => '2.3.0.0',
-            'reference' => 'c7aadcd6fd97ed9e199114269c0be3f335e38876',
+            'pretty_version' => '3.0.0',
+            'version' => '3.0.0.0',
+            'reference' => '039ef98c6b57b101d10bd11d8fdfda12cbd996dc',
             'type' => 'library',
             'install_path' => __DIR__ . '/../lcobucci/clock',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
         'lcobucci/jwt' => array(
-            'pretty_version' => '4.0.4',
-            'version' => '4.0.4.0',
-            'reference' => '55564265fddf810504110bd68ca311932324b0e9',
+            'pretty_version' => '4.3.0',
+            'version' => '4.3.0.0',
+            'reference' => '4d7de2fe0d51a96418c0d04004986e410e87f6b4',
             'type' => 'library',
             'install_path' => __DIR__ . '/../lcobucci/jwt',
             'aliases' => array(),
@@ -783,7 +783,7 @@
             'version' => '3.2.1.0',
             'reference' => '38f66a0cc043ed51d6edf7956d6439a2f263501f',
             'type' => 'metapackage',
-            'install_path' => null,
+            'install_path' => NULL,
             'aliases' => array(),
             'dev_requirement' => false,
         ),
@@ -889,15 +889,15 @@
         'php-http/async-client-implementation' => array(
             'dev_requirement' => false,
             'provided' => array(
-                0 => '*',
-                1 => '1.0',
+                0 => '1.0',
+                1 => '*',
             ),
         ),
         'php-http/client-implementation' => array(
             'dev_requirement' => false,
             'provided' => array(
-                0 => '*',
-                1 => '1.0',
+                0 => '1.0',
+                1 => '*',
             ),
         ),
         'php-http/discovery' => array(
@@ -1137,8 +1137,8 @@
         'psr/log-implementation' => array(
             'dev_requirement' => false,
             'provided' => array(
-                0 => '1.0.0 || 2.0.0 || 3.0.0',
-                1 => '1.0|2.0',
+                0 => '1.0|2.0',
+                1 => '1.0.0 || 2.0.0 || 3.0.0',
             ),
         ),
         'psr/simple-cache' => array(
@@ -1360,15 +1360,6 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
-        'stella-maris/clock' => array(
-            'pretty_version' => '0.1.7',
-            'version' => '0.1.7.0',
-            'reference' => 'fa23ce16019289a18bb3446fdecd45befcdd94f8',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../stella-maris/clock',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
         'swiftmailer/swiftmailer' => array(
             'pretty_version' => 'v6.3.0',
             'version' => '6.3.0.0',
@@ -1533,7 +1524,7 @@
             'version' => '1.20.0.0',
             'reference' => '54b8cd7e6c1643d78d011f3be89f3ef1f9f4c675',
             'type' => 'metapackage',
-            'install_path' => null,
+            'install_path' => NULL,
             'aliases' => array(),
             'dev_requirement' => false,
         ),

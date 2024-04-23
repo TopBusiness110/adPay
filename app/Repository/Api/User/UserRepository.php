@@ -2,43 +2,30 @@
 
 namespace App\Repository\Api\User;
 
-use App\Http\Resources\InviteFriendResource;
-use App\Http\Resources\MessageResource;
-use App\Http\Resources\ModelPriceResource;
-use App\Http\Resources\MyMessageResource;
-use App\Http\Resources\MyTubeResource;
-use App\Http\Resources\NotificationResource;
-use App\Http\Resources\PackageResource;
-use App\Http\Resources\SliderResource;
-use App\Http\Resources\TubeResource;
+
+use App\Http\Resources\AuctionResource;
+use App\Http\Resources\ProductResource;
+use App\Http\Resources\ShopResource;
 use App\Http\Resources\UserResource;
+use App\Http\Resources\VendorResource;
 use App\Interfaces\Api\User\UserRepositoryInterface;
-use App\Models\City;
-use App\Models\ConfigCount;
-use App\Models\Coupon;
-use App\Models\CouponUser;
-use App\Models\DeviceToken;
-use App\Models\GoogleDeviceId;
-use App\Models\Interest;
-use App\Models\InviteToken;
-use App\Models\Message;
-use App\Models\ModelPrice;
-use App\Models\Notification;
-use App\Models\Package;
-use App\Models\Setting;
+use App\Models\Ad;
+use App\Models\Address;
+use App\Models\AppUser;
+use App\Models\Auction;
+use App\Models\Cart;
+use App\Models\OrderDetail;
+use App\Models\Product;
+use App\Models\Shop;
+use App\Models\ShopCategory;
 use App\Models\Slider;
-use App\Models\Tube;
-use App\Models\User;
-use App\Models\UserAction;
-use App\Models\UserSpin;
-use App\Models\Withdraw;
 use App\Repository\Api\ResponseApi;
 use App\Traits\FirebaseNotification;
 use App\Traits\PhotoTrait;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -47,1006 +34,522 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
 {
     use PhotoTrait, FirebaseNotification;
 
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function loginWithGoogle(Request $request): JsonResponse
+    public function register(Request $request): JsonResponse
     {
         try {
+            $validator = Validator::make($request->all(), [
+                'name' => 'required',
+                'image' => 'nullable|image',
+                'phone' => 'required|numeric|unique:app_users,phone',
+                'password' => 'required',
+                'device_token' => 'required',
+            ]);
 
-            $setting = Setting::first();
+            if ($validator->fails()) {
+                $error = $validator->errors()->first();
+                return self::returnDataFail(null, $error, 422);
+            }
 
+            $newUser = new AppUser();
+            if ($request->has('image')) {
+                $newUser->image = self::uploadImage($request->image);
+            }
+            $newUser->name = $request->name;
+            $newUser->phone = $request->phone;
+            $newUser->password = Hash::make($request->password);
+            $newUser->type = 'user';
+            $newUser->device_token = $request->device_token;
+
+            if ($newUser->save()) {
+
+                $credentials = ['phone' => $request->phone, 'password' => $request->password];
+                $token = Auth::guard('user-api')->attempt($credentials);
+                $newUser['token'] = $token;
+
+                return self::returnDataSuccess(new UserResource($newUser), 'User Register Success');
+            } else {
+                return self::returnDataFail(null, 'something error', 422);
+            }
+        } catch (Exception $e) {
+            return self::returnDataFail(null, $e->getMessage(), 500);
+        }
+    } // end register
+
+    public function login(Request $request): JsonResponse
+    {
+        try {
             // Validation Rules
             $validatorLogin = Validator::make($request->all(), [
-                'gmail' => 'required|email',
-                'device_id' => 'required',
-                'access_token'=> 'required'
+                'phone' => 'required',
+                'device_token' => 'required',
+                'password' => 'required'
             ]);
 
             if ($validatorLogin->fails()) {
                 $errors = $validatorLogin->errors()->first();
-                return self::returnResponseDataApi(null, $errors, 422);
-            }
+                return self::returnDataFail(null, $errors, 422);
 
-            $check_exists = User::where('gmail', '=', $request->gmail)->first();
-
-            if ($check_exists) {
-
-                $check_exists->name = $request->name;
-                $check_exists->image = $request->image;
-                $check_exists->access_token = $request->access_token;
-                $check_exists->save();
-
-
-                // Authenticate User
-                $credentials = ['gmail' => $request->gmail, 'password' => '123456'];
-                $token = Auth::guard('user-api')->attempt($credentials);
-
-                // Get User and Attach Token
-                $user = Auth::guard('user-api')->user();
-                $user['token'] = $token;
-
-
-                // Update or Create PhoneToken
-                DeviceToken::query()->updateOrCreate(
-                    ['user_id' => $user->id, 'type' => $request->device_type],
-                    ['type' => $request->device_type, 'token' => $request->token]
-                );
-
-                // check if the user device id equals the current gmail
-                $checkDeviceId = GoogleDeviceId::query()
-                    ->where(['gmail' => $check_exists->gmail, 'device_id' => $request->device_id])->first();
-
-                if (!$checkDeviceId) {
-                    return self::returnResponseDataApi(null, "معرف الجهاز غير متطابق مع الجيميل الخاص بك", 422);
-                } // end if
-
-                return self::returnResponseDataApi(new UserResource($user), "تم تسجيل الدخول بنجاح", 200);
             } else {
+                $check_exists = AppUser::query()
+                    ->where('phone', '=', $request->phone)
+                    ->first();
 
-                // Validation Rules
-                $validatorRegister = Validator::make($request->all(), [
-                    'gmail' => 'required|email',
-                    'intrest_id' => 'required',
-                    'access_token'=>'required',
-                    'device_id' => 'required|unique:google_device_ids,device_id,except,id'
-                ]);
-
-                // Check Validation Result
-                if ($validatorRegister->fails()) {
-                    $errors = $validatorRegister->errors()->first();
-                    return self::returnResponseDataApi(null, $errors, 422);
-                }
-
-                // create user
-                $createUser = new User();
-                $createUser->name = $request->name ?? 'User';
-                $createUser->gmail = $request->gmail;
-                $createUser->image = $request->image;
-                $createUser->password = Hash::make('123456');
-                $createUser->google_id = $request->google_id ?? null;
-                $createUser->intrest_id = $request->intrest_id;
-                $createUser->points = $setting->point_user ?? 0;
-                $createUser->limit = $setting->limit_user ?? 0;
-                $createUser->msg_limit = 0;
-                $createUser->youtube_link = $request->youtube_link ?? null;
-                $createUser->invite_token = self::randomToken(10);
-                $createUser->access_token = $request->access_token;
-
-                if ($createUser->save()) {
+                if ($check_exists) {
                     // Authenticate User
-                    $credentials = ['gmail' => $createUser->gmail, 'password' => '123456'];
+                    $credentials = ['phone' => $request->phone, 'password' => $request->password];
                     $token = Auth::guard('user-api')->attempt($credentials);
+                    if (!$token) {
+                        return self::returnDataFail(null, 'phone or password is not correct !', 200);
+                    }
+                    // Get User and Attach Token
+                    $user = Auth::guard('user-api')->user();
+                    $user['token'] = $token;
 
-                    //? Get User and Attach Token
-                    $createUser = Auth::guard('user-api')->user();
-                    $createUser['token'] = $token;
+                    AppUser::find($user->id)->update(['session' => session()->getId()]);
 
-                    //? Update or Create PhoneToken
-                    DeviceToken::query()->updateOrCreate(
-                        ['user_id' => $createUser->id, 'type' => $request->device_type],
-                        ['type' => $request->device_type, 'token' => $request->token]
-                    );
-                    //? create a new user device Id with gmail
-                    new GoogleDeviceId($request->device_id, $request->gmail);
-
-                    return self::returnResponseDataApi(new UserResource($createUser), 'تم تسجيل الدخول لاول مرة بنجاح', 201);
-                } else {
-                    return self::returnResponseDataApi(new UserResource($createUser), 'هناك خطا ما حاول في وقت لاحق', 422);
+                    return self::returnDataSuccess(new UserResource($user), 'login success');
                 }
+                return self::returnDataFail(null, 'user not exists', 200);
             }
-        } catch (\Exception $exception) {
-            return self::returnResponseDataApi(null, $exception->getMessage(), 500);
+        } catch (Exception $exception) {
+            return self::returnDataFail(null, $exception->getMessage(), 500);
         }
-    } // end login with Google
+    }// end login
 
-    /**
-     * @return JsonResponse
-     */
     public function logout(): JsonResponse
     {
         try {
-            $user = Auth::guard('user-api')->user();
-
-            return self::returnResponseDataApi(null, "تم تسجيل الخروج بنجاح", 200);
+            Auth::guard('user-api')->logout(); // Logout the user
+            return self::returnDataSuccess(null, "successfully logged out");
         } catch (\Exception $exception) {
-            return self::returnResponseDataApi(null, $exception->getMessage(), 500);
+            return self::returnDataFail(null, $exception->getMessage(), 500);
         }
     } // logout
 
-    /**
-     * @return JsonResponse
-     */
     public function deleteAccount(): JsonResponse
     {
         try {
-            /** @var \App\Models\User $user * */
-            $user = Auth::guard('user-api')->user();
-            DeviceToken::query()->where('user_id', $user->id)->delete();
-            //            Tube::query()->where('user_id', $user->id)->delete();
-            //            UserAction::query()->where('user_id', $user->id)->delete();
+            $user = AppUser::find(Auth::guard('user-api')->user()->id);
             $user->delete();
             Auth::guard('user-api')->logout();
 
-            return self::returnResponseDataApi(null, "تم حذف الحساب بنجاح وتم تسجيل الخروج من التطبيق", 200);
+            return self::returnDataSuccess(null, "Account deleted successfully and logout");
         } catch (\Exception $exception) {
-            return self::returnResponseDataApi(null, $exception->getMessage(), 500);
+            return self::returnDataFail(null, $exception->getMessage(), 500);
         }
     } // deleteAccount
 
-    /**
-     * @return JsonResponse
-     */
-    public function getInterests(): JsonResponse
-    {
-        try {
-            $interests = Interest::select('id', 'name')->get();
-            return self::returnResponseDataApi($interests, 'تم الحصول علي البيانات بنجاح');
-        } catch (\Exception $e) {
-            return self::returnResponseDataApi(null, $e->getMessage(), 500);
-        }
-    } // getInterest
-
-    /**
-     * @return JsonResponse
-     */
-    public function getCities(): JsonResponse
-    {
-        try {
-            $cities = City::select('id', 'name')->get();
-            return self::returnResponseDataApi($cities, 'تم الحصول علي البيانات بنجاح');
-        } catch (\Exception $e) {
-            return self::returnResponseDataApi(null, $e->getMessage(), 500);
-        }
-    } // getInterest
-
-    /**
-     * @return JsonResponse
-     */
-    public function setting(): JsonResponse
-    {
-        try {
-            $data = Setting::first();
-            return self::returnResponseDataApi($data, 'تم الحصول علي البيانات بنجاح');
-        } catch (\Exception $e) {
-            return self::returnResponseDataApi(null, $e->getMessage(), 500);
-        }
-    } // getInterest
-
-    /**
-     * @return JsonResponse
-     */
-    public function getHome(): JsonResponse
-    {
-
-        try {
-            $subscribe_count = Tube::query()->where('user_id', Auth::guard('user-api')->user()->id)
-                ->where('type', 'sub')
-                ->count();
-            $views_count = Tube::query()->where('user_id', Auth::guard('user-api')->user()->id)
-                ->where('type', 'view')
-                ->count();
-            $message_count = Message::query()->where('user_id', Auth::guard('user-api')->user()->id)->count();
-
-            $setting = Setting::query()->first([
-                'logo',
-                'phone',
-                'limit_user',
-                'point_user',
-                'vat',
-                'point_price',
-                'limit_balance',
-                'token_price'
-            ]);
-
-            $data = [
-                'sliders' => SliderResource::collection(Slider::get()),
-                'user' => new UserResource(\Auth::user()),
-                'subscribe_count' => $subscribe_count,
-                'views_count' => $views_count,
-                'message_count' => $message_count,
-                'setting' => $setting,
-            ];
-            return self::returnResponseDataApi($data, 'تم الحصول علي البيانات بنجاح');
-        } catch (\Exception $e) {
-            return self::returnResponseDataApi(null, $e->getMessage(), 500);
-        }
-    } // get HomePage
-
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function configCount(Request $request): JsonResponse
-    {
-        try {
-            $data = ConfigCount::query()
-                ->when($request->type, function ($query, $type) {
-                    return $query->where('type', $type);
-                })
-                ->select('id', 'type', 'count', 'point')
-                ->get();
-            return self::returnResponseDataApi($data, 'تم الحصول علي البيانات بنجاح');
-        } catch (\Exception $e) {
-            return self::returnResponseDataApi(null, $e->getMessage(), 500);
-        }
-    }
-
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function addTube(Request $request): JsonResponse
-    {
-        try {
-            $user = User::find(Auth::guard('user-api')->user()->id);
-            $userPoint = $user->points;
-
-            $validator = Validator::make($request->all(), [
-                'type' => 'required|in:sub,view',
-                'url' => 'required|url',
-                'sub_count' => 'required_if:type,sub',
-                'view_count' => 'required_if:type,view',
-                'second_count' => 'required',
-            ]);
-
-            if ($validator->fails()) {
-                $error = $validator->errors()->first();
-                return self::returnResponseDataApi(null, $error, 422);
-            }
-
-            $sub_count = 0;
-            $view_count = 0;
-            $second_count = ConfigCount::find($request->second_count)->point;
-
-            if ($request->has('sub_count') && $request->sub_count != '') {
-                $sub_count = ConfigCount::find($request->sub_count)->point;
-                $sub_count_count = ConfigCount::find($request->sub_count)->count;
-                $pointsNeed = $second_count * $sub_count;
-            }
-            if ($request->has('view_count') && $request->view_count != '') {
-                $view_count = ConfigCount::find($request->view_count)->point;
-                $view_count_count = ConfigCount::find($request->view_count)->count;
-                $pointsNeed = $second_count * $view_count;
-            }
-
-            // if user not have VIP Package
-            if ($user->is_vip != 1) {
-                if ($user->limit > 0) {
-                    if ($userPoint >= $pointsNeed) {
-                        $createTube = new Tube();
-                        $createTube->type = $request->type;
-                        $createTube->points = $pointsNeed;
-                        $createTube->user_id = $user->id;
-                        $createTube->url = $request->url;
-                        $createTube->sub_count = $request->type == 'view' ? null : $request->sub_count;
-                        $createTube->second_count = $request->second_count;
-                        $createTube->view_count = $request->view_count;
-                        $createTube->target = ($request->type == 'view') ? $view_count_count : $sub_count_count;
-                        $createTube->status = 0;
-
-                        if ($createTube->save()) {
-                            $user->points -= $pointsNeed;
-                            $user->limit -= 1;
-                            $user->save();
-
-                            return self::returnResponseDataApi(new TubeResource($createTube), 'تم الانشاء بنجاح', 201);
-                        } else {
-                            return self::returnResponseDataApi(null, 'هناك خطا ما', 500);
-                        }
-                    } else {
-                        return self::returnResponseDataApi(null, 'نقاطك لا تكفي لاتمام العملية تحتاج الي ' . $pointsNeed - $userPoint . ' من النقاط ', 422);
-                    }
-                } else {
-                    return self::returnResponseDataApi(null, 'تم الانتهاء من الباقة الحالية قم بشراء باقة جديدة', 422);
-                }
-            } else {
-                // if user have VIP Package
-                if ($userPoint >= $pointsNeed) {
-                    $createTube = new Tube();
-                    $createTube->type = $request->type;
-                    $createTube->points = $pointsNeed;
-                    $createTube->user_id = $user->id;
-                    $createTube->url = $request->url;
-                    $createTube->sub_count = $request->type == 'view' ? null : $request->sub_count;
-                    $createTube->second_count = $request->second_count;
-                    $createTube->view_count = $request->view_count;
-                    $createTube->target = ($request->type == 'view') ? $view_count_count : $sub_count_count;
-                    $createTube->status = 0;
-
-                    if ($createTube->save()) {
-                        $user->points -= $pointsNeed;
-                        $user->limit -= 1;
-                        $user->save();
-
-                        return self::returnResponseDataApi(new TubeResource($createTube), 'تم الانشاء بنجاح', 201);
-                    } else {
-                        return self::returnResponseDataApi(null, 'هناك خطا ما', 500);
-                    }
-                } else {
-                    return self::returnResponseDataApi(null, 'نقاطك لا تكفي لاتمام العملية تحتاج الي ' . $pointsNeed - $userPoint . ' من النقاط ', 422);
-                }
-            }
-        } catch (\Exception $e) {
-            return self::returnResponseDataApi(null, $e->getMessage(), 500);
-        }
-    } // add subscribe
-
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function addMessage(Request $request): JsonResponse
-    {
-        try {
-            /** @var \App\Models\User $user * */
-            $user = Auth::guard('user-api')->user();
-
-            $validator = Validator::make($request->all(), [
-                'url' => 'required|url',
-                'description' => 'required',
-                'city_id' => 'required',
-                'intrest_id' => 'required',
-            ]);
-            //|> Validator Fails
-            if ($validator->fails()) {
-                $error = $validator->errors()->first();
-                return self::returnResponseDataApi(null, $error, 422);
-            }
-
-            if ($user->msg_limit > 0) {
-                $addMessage = new Message();
-                $addMessage->url = $request->url;
-                $addMessage->user_id = Auth::guard('user-api')->user()->id;
-                $addMessage->content = $request->description;
-                $addMessage->city_id = $request->city_id;
-                $addMessage->intrest_id = $request->intrest_id;
-
-                if ($addMessage->save()) {
-                    $user->msg_limit -= 1;
-                    $user->save();
-
-                    //|> send FCM notification
-                    $fcmData = [
-                        'title' => 'رسالة جديدة',
-                        'body' => $addMessage->content
-                    ];
-                    self::sendFcm($fcmData['title'], $fcmData['body'], null, true, $addMessage->intrest_id);
-
-                    return self::returnResponseDataApi(new MessageResource($addMessage), 'تم انشاء الرسالة بنجاح', 201);
-                } else {
-                    return self::returnResponseDataApi(null, 'هناك خطا ما', 500);
-                }
-            } else {
-                return self::returnResponseDataApi(null, 'لا يوجد باقة رسائل لديك  قم بشراء باقة رسائل', 422);
-            }
-        } catch (\Exception $e) {
-            return self::returnResponseDataApi(null, $e->getMessage(), 500);
-        }
-    } // end add Message
-
-    /**
-     * @return JsonResponse
-     */
-    public function notification(): JsonResponse
-    {
-        try {
-            $data = Notification::query()->where('user_id', Auth::user()->id)
-                ->orWhere('user_id', null)
-                ->latest()
-                ->get();
-
-            return self::returnResponseDataApi(NotificationResource::collection($data), 'تم الحصول علي البيانات بنجاح');
-        } catch (\Exception $e) {
-            return self::returnResponseDataApi(null, $e->getMessage(), 500);
-        }
-    } // end notification
-
-    /**
-     * @return JsonResponse
-     */
-    public function mySubscribe(): JsonResponse
-    {
-        try {
-            $tubes = Tube::query()->where('user_id', Auth::guard('user-api')->user()->id)
-                ->where('type', '=', 'sub')
-                ->latest()
-                ->get();
-            return self::returnResponseDataApi(MyTubeResource::collection($tubes), 'تم الحصول علي البيانات بنجاح');
-        } catch (\Exception $e) {
-            return self::returnResponseDataApi(null, $e->getMessage(), 500);
-        }
-    } // my subscribe
-
-    /**
-     * @return JsonResponse
-     */
-    public function myViews(): JsonResponse
-    {
-        try {
-            $tubes = Tube::query()->where('user_id', Auth::guard('user-api')->user()->id)
-                ->where('type', 'view')
-                ->latest()
-                ->get();
-
-            return self::returnResponseDataApi(MyTubeResource::collection($tubes), 'تم الحصول علي البيانات بنجاح');
-        } catch (\Exception $e) {
-            return self::returnResponseDataApi(null, $e->getMessage(), 500);
-        }
-    } // my views
-
-    /**
-     * @return JsonResponse
-     */
-    public function myProfile(): JsonResponse
-    {
-        try {
-            $user = Auth::guard('user-api')->user();
-            return self::returnResponseDataApi(new UserResource($user), 'تم الحصول علي البيانات بنجاح');
-        } catch (\Exception $e) {
-            return self::returnResponseDataApi(null, $e->getMessage(), 500);
-        }
-    } // my profile
-
-    /**
-     * @return JsonResponse
-     */
-    public function myMessages(): JsonResponse
-    {
-        try {
-            $user = Auth::guard('user-api')->user();
-            $messages = Message::query()->where('user_id', $user->id)->latest()->get();
-            if ($messages->count() > 0) {
-                return self::returnResponseDataApi(MyMessageResource::collection($messages), 'تم الحصول علي البيانات بنجاح');
-            } else {
-                return self::returnResponseDataApi([], 'تم الحصول علي البيانات بنجاح');
-            }
-        } catch (\Exception $e) {
-            return self::returnResponseDataApi(null, $e->getMessage(), 500);
-        }
-    }
-
-    /**
-     * @return JsonResponse
-     */
-    public function getMessages(): JsonResponse
-    {
-        try {
-            $user = Auth::guard('user-api')->user();
-            $messages = Message::query()
-                ->where('intrest_id', $user->intrest_id)
-                ->latest()
-                ->get();
-            if ($messages->count() > 0) {
-                return self::returnResponseDataApi(MessageResource::collection($messages), 'تم الحصول علي البيانات بنجاح');
-            } else {
-                return self::returnResponseDataApi(null, 'لا يوجد رسائل حتي الان', 422);
-            }
-        } catch (\Exception $e) {
-            return self::returnResponseDataApi(null, $e->getMessage(), 500);
-        }
-    }
-
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function addChannel(Request $request): JsonResponse
-    {
-        try {
-            $user = User::find(Auth::guard('user-api')->user()->id);
-            $validator = Validator::make($request->all(), [
-                'youtube_link' => 'required|active_url|url',
-                'youtube_name' => 'required',
-                'youtube_image' => 'required|active_url|url',
-                'channel_name' => 'required',
-            ]);
-
-            if ($validator->fails()) {
-                $error = $validator->errors()->first();
-                return self::returnResponseDataApi(null, $error, 422);
-            }
-
-            $user->youtube_link = $request->youtube_link;
-            $user->youtube_name = $request->youtube_name;
-            $user->youtube_image = $request->youtube_image;
-            $user->channel_name = $request->channel_name;
-            if ($user->save()) {
-                return self::returnResponseDataApi(new UserResource($user), 'تم اضافة لينك القناة بنجاح');
-            } else {
-                return self::returnResponseDataApi(null, 'هناك خطا ما', 500);
-            }
-        } catch (\Exception $e) {
-            return self::returnResponseDataApi(null, $e->getMessage(), 500);
-        }
-    } // add channel
-
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function getPageCoinsOrMsg(Request $request): JsonResponse
-    {
-        try {
-            $type = $request->type;
-            $listPoint = ModelPrice::where('type', $type)
-                ->orderBy('count', 'asc')
-                ->get();
-            return self::returnResponseDataApi(ModelPriceResource::collection($listPoint), 'تم الحصول علي البيانات بنجاح');
-        } catch (\Exception $e) {
-            return self::returnResponseDataApi(null, $e->getMessage(), 500);
-        }
-    } //  getPageCoinsOrMsg
-
-    /**
-     * @return JsonResponse
-     */
-    public function getLinkInvite(): JsonResponse
-    {
-        try {
-            $token = Auth::user()->invite_token;
-            return self::returnResponseDataApi(['token' => $token], 'تم الحصول على البيانات بنجاح');
-        } catch (\Exception $e) {
-            return self::returnResponseDataApi(null, $e->getMessage(), 500);
-        }
-    } // getLinkInvite
-
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function AddLinkPoints(Request $request): JsonResponse
-    {
-        try {
-            $user = User::find(Auth::user()->id);
-
-            $tokenPrice = Setting::query()->value('token_price');
-            $checkToken = User::query()->where('invite_token', $request->token)
-                ->where('id', '!=', $user->id)
-                ->first();
-
-            if (!$checkToken) {
-                return self::returnResponseDataApi(null, 'الكود غير موجود', 422);
-            } else {
-                $fromUser = $checkToken;
-                $checkInviteLink = InviteToken::query()->where('user_id', $user->id)
-                    ->where('token', $request->token)->first();
-
-                if ($checkInviteLink) {
-                    return self::returnResponseDataApi(null, 'تم استخدام الكود من قبل', 422);
-                } else {
-                    $createInviteLink = new InviteToken();
-                    $createInviteLink->token = $request->token;
-                    $createInviteLink->user_id = $user->id;
-                    $createInviteLink->status = 1;
-                    $createInviteLink->save();
-
-                    $fromUser->points += $tokenPrice;
-                    $fromUser->save();
-                    $user->points += $tokenPrice;
-                    $user->save();
-                    self::sendFcm('مكافئة التنزيل', 'تم اضافة مكافئة التنزيل رصيدك اصبح : ' . $fromUser->points, $fromUser->id);
-                    self::sendFcm('مكافئة التنزيل', 'تم اضافة مكافئة التنزيل رصيدك اصبح : ' . $user->points, $user->id);
-                    return self::returnResponseDataApi(new UserResource($user), 'تم اضافة النقاط بنجاح');
-                }
-            }
-        } catch (\Exception $e) {
-            return self::returnResponseDataApi(null, $e->getMessage(), 500);
-        }
-    } // AddLinkPoints
-
-    /**
-     * @return JsonResponse
-     */
-    public function getVipList(): JsonResponse
-    {
-        try {
-            $packages = Package::query()->select('id', 'name', 'price', 'days')
-                ->orderBy('days')
-                ->get();
-            return self::returnResponseDataApi(PackageResource::collection($packages), 'تم الحصول على البيانات بنجاح');
-        } catch (\Exception $e) {
-            return self::returnResponseDataApi(null, $e->getMessage(), 500);
-        }
-    }  // getVipList
-
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function addPointSpin(Request $request): JsonResponse
-    {
-        try {
-
-            if (!$this->checkPointSpinPool()) {
-                return self::returnResponseDataApi(['status' => 0], 'عجلة الحظ غير متاحة', 200);
-            }
-            $validator = Validator::make($request->all(), [
-                'points' => 'required|numeric',
-            ]);
-
-            if ($validator->fails()) {
-                $error = $validator->errors()->first();
-                return self::returnResponseDataApi(null, $error, 422);
-            }
-
-            $user = User::find(Auth::user()->id);
-
-            $spin = new UserSpin();
-            $spin->user_id = $user->id;
-            $spin->points = $request->points;
-            $spin->day = Carbon::now()->format('Y-m-d');
-
-            if ($spin->save()) {
-                $user->points += $request->points;
-                if ($user->save()) {
-                    return self::returnResponseDataApi(new UserResource($user), 'تم اضافة النقاط بنجاح', 200);
-                } else {
-                    return self::returnResponseDataApi(null, 'هناك خطا ما حاول في وقت لاحق', 500);
-                }
-            } else {
-                return self::returnResponseDataApi(null, 'هناك خطا ما حاول في وقت لاحق', 500);
-            }
-        } catch (Exception $e) {
-            return self::returnResponseDataApi(null, $e->getMessage(), 500);
-        }
-    }  // addPointSpin
-
-    /**
-     * @return JsonResponse
-     */
-    public function checkPointSpin(): JsonResponse
-    {
-        try {
-            $user = User::find(Auth::user()->id);
-            $checkSpin = UserSpin::query()
-                ->where('user_id', $user->id)
-                ->orderBy('created_at')
-                ->first();
-            if ($checkSpin) {
-                $oldDay = Carbon::parse($checkSpin->created_at)->addDay();
-                $checkDay = $oldDay < Carbon::now();
-                if ($checkDay) {
-                    return self::returnResponseDataApi(['status' => 1], 'عجلة الحظ متاحة', 200);
-                } else {
-                    return self::returnResponseDataApi(['status' => 0], 'عجلة الحظ غير متاحة', 200);
-                }
-            } else {
-                return self::returnResponseDataApi(['status' => 1], 'عجلة الحظ متاحة', 200);
-            }
-        } catch (Exception $e) {
-            return self::returnResponseDataApi(null, $e->getMessage(), 500);
-        }
-    } // checkPointSpin
-
-    /**
-     * @return bool
-     */
-    public function checkPointSpinPool(): bool
-    {
-
-        $user = User::find(Auth::user()->id);
-        $checkSpin = UserSpin::query()
-            ->where('user_id', $user->id)
-            ->orderBy('created_at')
-            ->first();
-        if ($checkSpin) {
-            $oldDay = Carbon::parse($checkSpin->created_at)->addDay();
-            $checkDay = $oldDay < Carbon::now();
-            if ($checkDay) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return true;
-        }
-    } // checkPointSpinPool
-
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function addPointCopun(Request $request): JsonResponse
-    {
-        try {
-            $user = User::find(Auth::user()->id);
-            $validator = Validator::make($request->all(), [
-                'copun' => 'required|exists:copons,code'
-            ]);
-
-            if ($validator->fails()) {
-                $error = $validator->errors()->first();
-                return self::returnResponseDataApi(null, $error, 422);
-            }
-
-            $copon = Coupon::query()->where('code', $request->copun)->first();
-
-            if ($copon) {
-                // user used coupons count
-                $usersCoponCount = CouponUser::query()->where('copon_id', $copon->id)->count();
-                // check if user used coupon
-                $checkUserCopon = CouponUser::query()
-                    ->where('copon_id', $copon->id)
-                    ->where('user_id', $user->id)
-                    ->first();
-                if ($checkUserCopon) {
-                    return self::returnResponseDataApi(null, 'تم استخدام هذا الكوبون من قبل', 422);
-                }
-
-                if ($usersCoponCount >= $copon->limit) {
-                    return self::returnResponseDataApi(null, 'تم تخطي حد الاستخدام لهذا الكوبون', 422);
-                }
-
-                $createCouponUser = new CouponUser();
-                $createCouponUser->user_id = $user->id;
-                $createCouponUser->copon_id = $copon->id;
-                $createCouponUser->save();
-
-                $user->points += $copon->points;
-                $user->save();
-                return self::returnResponseDataApi(new UserResource($user), 'تم الحصول علي النقاط بنجاح', 200);
-            } else {
-                return self::returnResponseDataApi(null, 'الكوبون غير صحيح', 422);
-            }
-        } catch (Exception $e) {
-            return self::returnResponseDataApi(null, $e->getMessage(), 500);
-        }
-    } //
-
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function getTubeRandom(Request $request): JsonResponse
-    {
-        try {
-            $user = User::find(Auth::user()->id);
-            $validator = Validator::make($request->all(), [
-                'type' => 'required|in:view,sub'
-            ], [
-                'type.required' => 'حقل النوع مطلوب'
-            ]);
-
-            if ($validator->fails()) {
-                $error = $validator->errors()->first();
-                return self::returnResponseDataApi(null, $error, 422);
-            }
-
-            $userVideos = UserAction::query()
-                ->where('user_id', $user->id)
-                ->where('type', $request->type)
-                ->where('status', '1')
-                ->pluck('tube_id')->toArray();
-
-            $videos = Tube::query()
-                ->where('user_id', '!=', $user->id)
-                ->whereNotIn('id', $userVideos)
-                ->where('type', $request->type)
-                ->get();
-
-            if ($videos->count() > 0) {
-                $randomVideo = $videos->random();
-                return self::returnResponseDataApi(new TubeResource($randomVideo), 'تم الحصول على البيانات بنجاح', 200);
-            } else {
-                return self::returnResponseDataApi(null, 'لا يوجد بيانات', 200);
-            }
-        } catch (Exception $e) {
-            return self::returnResponseDataApi(null, $e->getMessage(), 500);
-        }
-    } // getTubeRandom
-
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function userViewTube(Request $request): JsonResponse
-    {
-        try {
-            $vat = Setting::value('vat');
-            $user = User::find(Auth::user()->id);
-            // validate requests
-            $validator = Validator::make($request->all(), [
-                'tube_id' => 'required',
-                'status' => 'required',
-            ]);
-            // return errors
-            if ($validator->fails()) {
-                $error = $validator->errors()->first();
-                return self::returnResponseDataApi(null, $error, 422);
-            }
-
-            $tube = Tube::query()
-                ->where('id', $request->tube_id)
-                ->where('target', '!=', '0')
-                ->first();
-
-            if (!$tube) {
-                return self::returnResponseDataApi(null, 'لا يوجد فيديو او قناه بهذا المعرف', 422);
-            }
-            // point vat calculate
-            $point_vat = $tube->points - ($tube->points * ($vat / 100));
-
-            // view point calculate
-            if ($tube->type == 'view') {
-                $point_gain = $point_vat / $tube->viewCount->count;
-            } else {
-                $point_gain = $point_vat / $tube->subCount->count;
-            }
-
-            $point_gain = number_format($point_gain, 0);
-
-            // check if action exists
-            $checkActionExists = UserAction::query()
-                ->where([
-                    'user_id' => $user->id,
-                    'tube_id' => $request->tube_id,
-                ])->first();
-            // if action update action exists status and point
-            if ($checkActionExists) {
-
-                if ($checkActionExists->status == 1) {
-                    return self::returnResponseDataApi($checkActionExists, 'تم التحديث من قبل لا يمكن تغيير الحالة', 201);
-                }
-
-                $checkActionExists->update([
-                    'status' => $request->status,
-                    'points' => $point_gain
-                ]);
-
-                if ($checkActionExists->status == 1) {
-                    $tube->target -= 1;
-                    $tube->save();
-                    $user->points += $point_gain;
-                    $user->save();
-                }
-
-                return self::returnResponseDataApi($checkActionExists, 'تم التحديث بنجاح', 201);
-            } else {
-                $addUserAction = new UserAction();
-                $addUserAction->user_id = $user->id;
-                $addUserAction->tube_id = $request->tube_id;
-                $addUserAction->type = $tube->type;
-                $addUserAction->status = $request->status;
-                $addUserAction->points = $point_gain;
-                // if save return response
-                if ($addUserAction->save()) {
-                    if ($addUserAction->status == 1) {
-                        $tube->target -= 1;
-                        $tube->save();
-                        $user->points += $point_gain;
-                        $user->save();
-                    }
-                    return self::returnResponseDataApi($addUserAction, 'تم الاضافة بنجاح');
-                } else {
-                    return self::returnResponseDataApi(null, 'هناك خطا ما', 500);
-                } // end if
-            } // end if
-
-        } catch (Exception $e) {
-            return self::returnResponseDataApi(null, $e->getMessage(), 500);
-        } // end try
-    } // userViewTube
-
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
     public function checkUser(Request $request): JsonResponse
     {
-        //return self::returnResponseDataApi('good',$request);
-
         try {
-            $gmail = $request->email;
-            $checkUser = User::where('email', $gmail)->first();
-            if ($checkUser) {
-                return self::returnResponseDataApi(['status' => 1], 'هذا الحساب موجود في قواعد البيانات');
-            } else {
-                return self::returnResponseDataApi(['status' => 0], 'هذا الحساب غير موجود في قواعد البيانات');
-            }
-        } catch (Exception $e) {
-            return self::returnResponseDataApi(null, $e->getMessage(), 500);
-        } // end try
-    } // checkUser
-
-
-    /**
-     ** check user device id for one device gmail account
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function checkDevice(Request $request): JsonResponse
-    {
-        try {
-            $data = [];
-
-            $deviceId = GoogleDeviceId::query()
-                ->select('device_id', 'gmail')
-                ->where('device_id', $request->device_id)
-                ->first();
-            if ($deviceId) {
-                $data['user'] = User::where('gmail', $deviceId->gmail)->first();
-                $data['status'] = 1;
-                return self::returnResponseDataApi($data, "تم الحصول علي البيانات بنجاح", 200);
-            } else {
-                $data['status'] = 0;
-                return self::returnResponseDataApi($data, "لا يوجد بيانات مرتبطه بهذا المعرف", 200);
-            }
-        } catch (Exception $e) {
-            return self::returnResponseDataApi(null, $e->getMessage(), 500);
-        } // end try
-    } // checkDevice
-
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function withdraw(Request $request): JsonResponse
-    {
-        try {
-            $user = User::find(Auth::user()->id);
-            $point_price = Setting::value('point_price');
-            $limit_balance = Setting::value('limit_balance');
-            $rules = [
+            // Validation Rules
+            $validator = Validator::make($request->all(), [
                 'phone' => 'required',
-                'amount' => 'required'
-            ];
-            $validator = Validator::make($request->all(), $rules);
+            ]);
 
             if ($validator->fails()) {
-                $error = $validator->errors()->first();
-                return self::returnResponseDataApi(null, $error, 422);
-            }
-
-            if ($user->points < $limit_balance) {
-                return self::returnResponseDataApi(null, 'لا يوجد رصيد كافي لسحبه اقل رصيد للسحب : ' . $limit_balance . ' ج.م', 422);
-            }
-
-            $createWithdraw = new Withdraw();
-            $createWithdraw->user_id = $user->id;
-            $createWithdraw->phone = $request->input('phone');
-            $createWithdraw->price = $request->input('amount');
-            $createWithdraw->status = 0;
-
-            if ($createWithdraw->save()) {
-                $user->points -= $createWithdraw->price * $point_price;
-                $user->save();
-
-                //|> send FCM notification
-                $fcmData = [
-                    'title' => 'طلب سحب رصيد',
-                    'body' => 'تم طلب سحب رصيد وسيتم اخطارك بارسال الرصيد في اقرب وقت'
-                ];
-                $this->sendFirebaseNotification($fcmData, $user->id);
-
-                return self::returnResponseDataApi(['status' => 1], 'تم ارسال طلب سحب رصيد بنجاح');
+                $errors = $validator->errors()->first();
+                return self::returnDataFail(null, $errors, 422);
             } else {
-                return self::returnResponseDataApi(null, 'هناك خطا ما حاول في وقت لاحق', 422);
+                $check_exists = AppUser::query()
+                    ->where('phone', $request->phone)
+                    ->first();
+                if ($check_exists) {
+                    if ($check_exists->type == 'vendor') {
+                        return self::returnDataSuccess(new VendorResource($check_exists), 'user is exists');
+                    } else {
+                        return self::returnDataSuccess(new UserResource($check_exists), 'user is exists');
+                    }
+                } else {
+                    return self::returnDataFail(null, 'user doesnt exists', 422);
+                }
             }
-        } catch (Exception $e) {
-            return self::returnResponseDataApi(null, $e->getMessage(), 500);
+
+        } catch (\Exception $exception) {
+            return self::returnDataFail(null, $exception->getMessage(), 500);
+        }
+    } // end checkUser
+
+    public function resetPassword(Request $request): JsonResponse
+    {
+        try {
+            // Validation Rules
+            $validator = Validator::make($request->all(), [
+                'password' => 'required|confirmed',
+                'phone' => 'required'
+            ]);
+
+            if ($validator->fails()) {
+                $errors = $validator->errors()->first();
+                return self::returnDataFail(null, $errors, 422);
+            } else {
+                $check_exists = AppUser::query()
+                    ->where('phone', $request->phone)
+                    ->first();
+                if ($check_exists) {
+                    $check_exists->password = \Hash::make($request->password);
+                    $check_exists->save();
+                    if ($check_exists->type == 'vendor') {
+                        return self::returnDataSuccess(null, 'password updated successfully');
+                    } else {
+                        return self::returnDataSuccess(null, 'password updated successfully');
+                    }
+                } else {
+                    return self::returnDataFail(null, 'user doesnt exists', 422);
+                }
+            }
+        } catch (\Exception $exception) {
+            return self::returnDataFail(null, $exception->getMessage(), 500);
+        }
+    } // end resetPassword
+
+
+    public function getHome(): JsonResponse
+    {
+        try {
+            $user = AppUser::find(Auth::guard('user-api')->user()->id);
+            $sliders = Slider::query()
+                ->select('id', 'image', 'url')
+                ->where('status', '=', 1)->latest()->get();
+            $categories = ShopCategory::query()
+                ->select('id', 'title_ar', 'title_en')
+                ->where('status', '=', 1)->latest()->get();
+            $ads = Ad::query()
+                ->where('status', '=', 1)
+                ->where('complete', '=', 0)
+                ->latest()->get();
+            $product_most_sell_ids = OrderDetail::query()->groupBy('product_id')->pluck('product_id')->toArray();
+            $product_most_sell = Product::query()
+                ->whereIn('id', $product_most_sell_ids)->latest()->get();
+            $shops = Shop::query()->latest()->get();
+
+            $auctions = Auction::query()->latest()->get();
+
+            $products = Product::query()->latest()->get();
+
+            $data = [
+                'sliders' => $sliders,
+                'categories' => $categories,
+                'ads' => $ads,
+                'product_most_sell' => $product_most_sell,
+                'shops' => $shops,
+                'auctions' => $auctions,
+                'products' => $products,
+                'user' => $user
+            ];
+
+            return self::returnDataSuccess($data, 'get home success');
+        } catch (Exception $exception) {
+            return self::returnDataFail(null, $exception->getMessage(), 500);
+        }
+    } // end getHome
+
+    public function getCategories(): JsonResponse
+    {
+        try {
+            $categories = ShopCategory::query()->get();
+            return self::returnDataSuccess($categories, 'get categories success');
+        } catch (Exception $exception) {
+            return self::returnDataFail(null, $exception->getMessage(), 500);
+        }
+    } // end getCategories
+
+    public function myAddresses(): JsonResponse
+    {
+        try {
+            $addresses = Address::query()->where('user_id', Auth::guard('user-api')->user()->id)->get();
+            return self::returnDataSuccess($addresses, 'get addresses success');
+        } catch (Exception $exception) {
+            return self::returnDataFail(null, $exception->getMessage(), 500);
+        }
+    } // end myAddresses
+
+    public function addAddress(Request $request): JsonResponse
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'address_id' => 'required',
+                'city' => 'required',
+                'region' => 'required',
+                'details' => 'nullable',
+                'default' => 'required|in:0,1',
+            ]);
+
+            if ($validator->fails()) {
+                $errors = $validator->errors()->first();
+                return self::returnDataFail(null, $errors, 422);
+            }
+
+            // if default is true update all default to false
+            if ($request->default == 1) {
+                Address::query()->where('user_id', Auth::guard('user-api')->user()->id)->update([
+                    'default' => 0
+                ]);
+            }
+
+            $address = new Address();
+            $address->user_id = Auth::guard('user-api')->user()->id;
+            $address->region = $request->region;
+            $address->city = $request->city;
+            $address->details = $request->details;
+            $address->default = $request->default;
+            $address->save();
+            return self::returnDataSuccess($address, 'add address success');
+        } catch (Exception $exception) {
+            return self::returnDataFail(null, $exception->getMessage(), 500);
+        }
+    } // end addAddress
+
+    public function updateAddress(Request $request): JsonResponse
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'address_id' => 'required',
+                'city' => 'required',
+                'region' => 'required',
+                'details' => 'nullable',
+                'default' => 'required|in:0,1',
+            ]);
+
+            if ($validator->fails()) {
+                $errors = $validator->errors()->first();
+                return self::returnDataFail(null, $errors, 422);
+            }
+
+            $address = Address::query()->find($request->address_id);
+
+            if ($address) {
+                // if default is true update all default to false
+                if ($request->default == 1) {
+                    Address::query()->where('user_id', Auth::guard('user-api')->user()->id)->update([
+                        'default' => 0
+                    ]);
+                }
+                $address->region = $request->region;
+                $address->city = $request->city;
+                $address->details = $request->details;
+                $address->default = $request->default;
+                $address->save();
+                return self::returnDataSuccess($address, 'update address success');
+            } else {
+                return self::returnDataFail(null, 'address not found', 422);
+            }
+        } catch (Exception $exception) {
+            return self::returnDataFail(null, $exception->getMessage(), 500);
         } // end try
-    } // end withdraw
+    } // end updateAddress
+
+    public function deleteAddress($id): JsonResponse
+    {
+        try {
+            $address = Address::query()->whereId($id)->where('user_id', Auth::guard('user-api')->user()->id)->first();
+            if ($address) {
+                $address->delete();
+                return self::returnDataSuccess(null, 'delete address success');
+            } else {
+                return self::returnDataFail(null, 'address not found', 422);
+            }
+        } catch (Exception $exception) {
+            return self::returnDataFail(null, $exception->getMessage(), 500);
+        }
+    } // delete address
+
+    public function getRegions(): JsonResponse
+    {
+        try {
+            // Read the JSON file
+            $regions_json = file_get_contents(public_path('locations/city.json'));
+
+            // Decode the JSON data
+            $regions_data = json_decode($regions_json, true);
+
+            // Check if decoding was successful
+            if ($regions_data === null) {
+                // Handle JSON decoding error
+                return response()->json(['error' => 'Failed to decode JSON data'], 500);
+            }
+
+            // Return the regions data
+            return self::returnDataSuccess($regions_data, 'get regions success');
+        } catch (Exception $exception) {
+            return self::returnDataFail(null, $exception->getMessage(), 500);
+        }
+    } // end getRegions
+
+    public function getCityByRegion(Request $request): JsonResponse
+    {
+        try {
+            // Validate the region ID
+            $request->validate([
+                'region_id' => 'required|integer',
+            ]);
+
+            // Read the JSON file containing cities data
+            $cities_json = file_get_contents(public_path('locations/area.json'));
+
+            // Decode the JSON data
+            $cities_data = json_decode($cities_json, true);
+
+            // Check if decoding was successful
+            if ($cities_data === null) {
+                // Handle JSON decoding error
+                return response()->json(['error' => 'Failed to decode JSON data'], 500);
+            }
+
+            // Extract cities for the specified region ID
+            $region_id = $request->input('region_id');
+            $region_cities = [];
+
+            foreach ($cities_data as $city) {
+                if ($city['region_id'] == $region_id) {
+                    $region_cities[] = $city;
+                }
+            }
+
+            // Return the cities data for the specified region
+            return self::returnDataSuccess($region_cities, 'get cities success');
+
+        } catch (Exception $exception) {
+            return self::returnDataFail(null, $exception->getMessage(), 500);
+        }
+    } // end getCityByRegion
+
+    public function getProducts(Request $request): JsonResponse
+    {
+        try {
+            $products = Product::query()
+                ->when($request->cat_id, function ($query) use ($request) {
+                    $query->where('shop_cat_id', $request->cat_id);
+                })->get();
+            return self::returnDataSuccess(ProductResource::collection($products), 'get products success');
+        } catch (Exception $exception) {
+            return self::returnDataFail(null, $exception->getMessage(), 500);
+        }
+    } // end getProducts
+
+    public function getAuctions(Request $request): JsonResponse
+    {
+        try {
+            $auctions = Auction::query()
+                ->when($request->cat_id, function ($query) use ($request) {
+                    $query->where('cat_id', $request->cat_id);
+                })->get();
+            return self::returnDataSuccess(AuctionResource::collection($auctions), 'get auctions success');
+        } catch (Exception $exception) {
+            return self::returnDataFail(null, $exception->getMessage(), 500);
+        }
+    } // end getAuctions
+
+    public function getShops(Request $request): JsonResponse
+    {
+        try {
+            $shops = AppUser::query()
+                ->where('type', 'vendor')
+                ->whereHas('shop')
+                ->when($request->cat_id, function ($query) use ($request) {
+                    $query->whereHas('shop', function ($query) use ($request) {
+                        $query->where('shop_cat_id', $request->cat_id);
+                    });
+                })->get();
+            return self::returnDataSuccess(VendorResource::collection($shops), 'get Vendor Shops success');
+        } catch (Exception $exception) {
+            return self::returnDataFail(null, $exception->getMessage(), 500);
+        }
+    } // end getShop
+
+    public function getAds(Request $request): JsonResponse
+    {
+        try {
+            $ads = Ad::query()->where('complete', '=', 0)
+                ->where('status', '=', 1)
+                ->get();
+            return self::returnDataSuccess($ads, 'get ads success');
+        } catch (Exception $exception) {
+            return self::returnDataFail(null, $exception->getMessage(), 500);
+        }
+    } // end getAds
+
+    public function productDetails($id): JsonResponse
+    {
+        try {
+            $product = Product::query()->find($id);
+            if ($product)
+                return self::returnDataSuccess(new ProductResource($product), 'get product details success');
+            else
+                return self::returnDataFail(null, 'product not found', 404);
+        } catch (Exception $exception) {
+            return self::returnDataFail(null, $exception->getMessage(), 500);
+        }
+    } // end productDetails
+
+    public function addToCart(Request $request): JsonResponse
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'product_id' => 'required|exists:products,id',
+                'qty' => 'required|integer|min:1',
+            ]);
+
+            if ($validator->fails()) {
+                return self::returnDataFail(null, $validator->errors()->first(), 422);
+            }
+            $cart = Cart::query()->where('user_id', \auth('user-api')->user()->id)
+                ->where('product_id', $request->product_id)
+                ->first();
+            $product = Product::query()->find($request->product_id);
+            if ($cart) {
+                $cart->update([
+                    'qty' => $cart->qty + $request->qty,
+                    'total' => $cart->total + ($product->price * $request->qty)
+                ]);
+            } else {
+                $cart = Cart::query()->create([
+                    'user_id' => \auth('user-api')->user()->id,
+                    'vendor_id' => $product->vendor_id,
+                    'product_id' => $request->product_id,
+                    'qty' => $request->qty,
+                    'total' => $request->qty * $product->price
+                ]);
+            }
+            return self::returnDataSuccess($cart, 'add to cart success');
+        } catch (Exception $exception) {
+            return self::returnDataFail(null, $exception->getMessage(), 500);
+        }
+    } // end addToCart
+
+    public function getCart(): JsonResponse
+    {
+        try {
+            $carts = Cart::query()->where('user_id', \auth('user-api')->user()->id)->get();
+
+            $groupedCarts = $carts->groupBy('vendor_id');
+            $vendorCarts = new Collection();
+
+            foreach ($groupedCarts as $vendorId => $carts) {
+                $vendorCarts->push([
+                    'vendor' => new VendorResource(AppUser::whereId($vendorId)->first()),
+                    'carts' => $carts->toArray()
+                ]);
+            }
+
+            return self::returnDataSuccess($vendorCarts, 'get cart success');
+        } catch (Exception $exception) {
+            return self::returnDataFail(null, $exception->getMessage(), 500);
+        }
+    } // end getCart
+
+      public function auctionDetails($id): JsonResponse
+    {
+        try {
+            $auction = Auction::query()->find($id);
+            if ($auction)
+                return self::returnDataSuccess(new AuctionResource($auction), 'get auction details success');
+            else
+                return self::returnDataFail(null, 'auction not found', 404);
+        } catch (Exception $exception) {
+            return self::returnDataFail(null, $exception->getMessage(), 500);
+        }
+    }
+
 } // eldapour
 ###############|> Made By https://github.com/eldapour (eldapour) 🚀
