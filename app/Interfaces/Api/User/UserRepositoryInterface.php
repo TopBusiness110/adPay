@@ -130,6 +130,7 @@ interface UserRepositoryInterface
      * @return JsonResponse
      */
     public function auctionDetails($id): JsonResponse;
+    public function storeComment($request): JsonResponse;
 
 }
 ###############|> Made By https://github.com/eldapour (eldapour) 🚀

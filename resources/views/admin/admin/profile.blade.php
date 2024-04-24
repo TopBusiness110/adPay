@@ -59,7 +59,7 @@
                                         <tbody class="col-lg-12 col-xl-4 p-0">
                                             <tr>
                                                 <td><strong>Register Date :</strong> {{$admin->created_at ? $admin->created_at->diffForHumans() : '____'}}</td>
-                                            </tr>                                            
+                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>

@@ -11,8 +11,17 @@ class OrderRepository implements OrderInterface
 {
     public function index($request)
     {
+
+        $orders = Order::query();
+        $total = Order::select('total')->get()->sum('total');
+
         if ($request->ajax()) {
-            $orders = Order::get();
+
+            if ($request->has('status') && $request->status !== 'all') {
+                $orders = Order::where('type', $request->status);
+            }
+            $orders = $orders->latest()->get();
+
             return DataTables::of($orders)
                 ->addColumn('action', function ($orders) {
                     return '
@@ -39,9 +48,10 @@ class OrderRepository implements OrderInterface
                 ->escapeColumns([])
                 ->make(true);
         } else {
-            return view('admin/orders/index');
+            return view('admin/orders/index',compact('total'));
         }
     }
+
 
     public function delete($request)
     {

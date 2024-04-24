@@ -53,6 +53,7 @@ Route::group(['prefix' => 'user'], function () {
         Route::get('getAds', [UserController::class, 'getAds']);
         Route::get('productDetails/{id}', [UserController::class, 'productDetails']);
         Route::get('auctionDetails/{id}', [UserController::class, 'auctionDetails']);
+        Route::post('storeComment', [UserController::class, 'storeComment']);
 
         Route::post('addToCart', [UserController::class, 'addToCart']);
         Route::get('getCart', [UserController::class, 'getCart']);
@@ -63,6 +64,9 @@ Route::group(['prefix' => 'user'], function () {
         Route::post('updateAddress', [UserController::class, 'updateAddress']);
         Route::post('deleteAddress/{id}', [UserController::class, 'deleteAddress']);
     });
+
+
+
 });
 ############|> END USER ROUTES
 
@@ -102,6 +106,8 @@ Route::group(['prefix' => 'vendor'], function () {
         Route::post('room/{id}/sendMessage', [VendorController::class, 'sendMessage']);
         Route::post('room/updateSeen', [VendorController::class, 'updateSeen']);
         Route::get('myWallet', [VendorController::class, 'myWallet']);
+        Route::post('vendorProfile/{id}', [VendorController::class, 'vendorProfile']);
+
 
         // products
         Route::post('addProduct', [ProductController::class, 'addProduct']);
@@ -121,6 +127,8 @@ Route::group(['prefix' => 'vendor'], function () {
         Route::get('orders', [OrderController::class, 'orders']);
         Route::post('changOrderStatus', [OrderController::class, 'changOrderStatus']);
         Route::get('order/d/{id}', [OrderController::class, 'orderDetails']);
+
+
     });
 });
 

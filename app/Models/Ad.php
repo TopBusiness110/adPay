@@ -30,7 +30,7 @@ class Ad extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(AppUser::class)->where('type', 'user');
+        return $this->belongsTo(AppUser::class,'user_id','id');
     }
 
     public function package(): BelongsTo

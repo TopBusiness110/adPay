@@ -11,11 +11,12 @@ use Illuminate\Support\Facades\Storage;
 class SettingRepository implements SettingInterface
 {
 
-    public function showEditSetting(): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\View\View|\Illuminate\Contracts\Foundation\Application
+    public function showEditSetting()
     {
         $setting = Setting::first();
 
-        $settingData = $setting->only(['id', 'point_video', 'auction_vat_description', 'logo', 'about_us', 'privacy', 'phones', 'whatsapp', 'fcm_server']);
+
+         $settingData = $setting->only(['id', 'point_video', 'auction_vat_description', 'logo', 'about_us', 'privacy', 'phones', 'whatsapp', 'fcm_server']) ;
 
         return view('admin/settings/index', compact('settingData'));
     }

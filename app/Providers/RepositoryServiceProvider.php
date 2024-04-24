@@ -13,7 +13,9 @@ use App\Interfaces\MainInterface;
 use App\Interfaces\NotificationInterface;
 use App\Interfaces\OrderInterface;
 use App\Interfaces\ProductInterface;
+use App\Interfaces\SettingInterface;
 use App\Interfaces\ShopCategoryInterface;
+use App\Interfaces\SliderInterface;
 use App\Interfaces\UserInterface;
 use App\Repository\AdminRepository;
 use App\Repository\AdPackageRepository;
@@ -27,7 +29,9 @@ use App\Repository\MainRepository;
 use App\Repository\NotificationRepository;
 use App\Repository\OrderRepository;
 use App\Repository\ProductRepository;
+use App\Repository\SettingRepository;
 use App\Repository\ShopCategoryRepository;
+use App\Repository\SliderRepository;
 use App\Repository\UserRepository;
 use Illuminate\Support\ServiceProvider;
 use App\Models\ShopCategory;
@@ -65,6 +69,8 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(OrderInterface::class,OrderRepository::class);
         $this->app->bind(ShopCategoryInterface::class,ShopCategoryRepository::class);
         $this->app->bind(ProductInterface::class,ProductRepository::class);
+        $this->app->bind(SliderInterface::class,SliderRepository::class);
+        $this->app->bind(SettingInterface::class,SettingRepository::class);
         // ----------------------------------------------------------------
 
 

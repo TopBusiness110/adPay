@@ -88,9 +88,6 @@
 
                                 </div>
 
-
-
-
                             </div>
                             </div>
 
@@ -120,19 +117,19 @@
     <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css" rel="stylesheet" type="text/css" />
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var inputElm = document.querySelector('[name="phones"]'),
-                tagify = new Tagify(inputElm);
+{{--    <script>--}}
+{{--        document.addEventListener('DOMContentLoaded', function() {--}}
+{{--            var inputElm = document.querySelector('[name="phones"]'),--}}
+{{--                tagify = new Tagify(inputElm);--}}
 
-            inputElm.addEventListener('change', onChange);
+{{--            inputElm.addEventListener('change', onChange);--}}
 
-            function onChange(e){
-                // outputs a String
-                console.log(e.target.value)
-            }
-        });
-    </script>
+{{--            function onChange(e){--}}
+{{--                // outputs a String--}}
+{{--                console.log(e.target.value)--}}
+{{--            }--}}
+{{--        });--}}
+{{--    </script>--}}
 
 
 

@@ -21,9 +21,29 @@
 									</span> اضافة جديد
                         </button>
                     </a> --}}
+                    <div class="">
+                        <label class="form-label">فلترة الطلبات </label>
+                        <select id="status-filter">
+                            <option value="all">الكل</option>
+                            <option value="new">جديدة</option>
+                            <option value="pending">معلق</option>
+                            <option value="cancelled">تم الغاه</option>
+                            <option value="complete">مكتملة</option>
+                        </select>
+                    </div>
+
+                            <div>
+                                <label class="form-label">المبلغ الاجمالي</label>
+                                <p class="form-label">{{$total}}</p>
+                            </div>
+
+
+
                 </div>
                 <div class="card-body">
+
                     <div class="table-responsive">
+
                         <!--begin::Table-->
                         <table class="table table-striped table-bordered text-nowrap w-100" id="dataTable">
                             <thead>
@@ -83,11 +103,25 @@
             {data: 'total', name: 'total'},
             {data: 'action', name: 'action', orderable: false, searchable: false},
         ]
-        showData('{{route('orders.index')}}', columns);
 
         deleteScript('{{route('order.delete', ':id')}}');
 
-        
+
+        let ajax = {
+            url: '{{route('orders.index')}}',
+            data: function (d) {
+                d.status = $('#status-filter').val(); // Assuming you have a select input with the id 'status-filter'
+            }
+        };
+        showData(ajax, columns);
+
+        $('#status-filter').on('change', function () {
+            $('#dataTable').DataTable().destroy();
+            ajax.data = function (d) {
+                d.status = $('#status-filter').val(); // Assuming you have a select input with the id 'status-filter'
+            }
+            showData(ajax, columns)
+        })
     </script>
 @endsection
 

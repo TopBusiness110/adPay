@@ -22,6 +22,13 @@ class ShopCategoryRepository implements ShopCategoryInterface
                                 </button>
                        ';
                 })
+                ->editColumn('status', function ($shop_categories) {
+                    if ($shop_categories->status == 1) {
+                        return '<span class="badge badge-success">مفعل</span>';
+                    } else {
+                        return '<span class="badge badge-danger">غير مفعل</span>';
+                    }
+                })
                 ->escapeColumns([])
                 ->make(true);
         } else {

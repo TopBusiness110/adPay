@@ -20,6 +20,7 @@ class ProductRepository implements ProductInterface
                                         <i class="fas fa-trash"></i>
                                 </button>
                        ';
+
                 })
                 ->editColumn('vendor_id', function ($products) {
                     return $products->vendor->name ?? '';
