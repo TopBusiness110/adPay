@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Model;
@@ -38,5 +39,10 @@ class AppUser extends Authenticatable implements JWTSubject
     public function wallet(): HasOne
     {
         return $this->hasOne(Wallet::class,'vendor_id','id');
+    }
+    public function products(): HasMany
+    {
+        return $this->hasMany(Product::class,'vendor_id','id');
+
     }
 }

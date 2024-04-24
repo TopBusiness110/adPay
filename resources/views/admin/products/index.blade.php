@@ -29,6 +29,7 @@
                             <thead>
                             <tr class="fw-bolder text-muted bg-light">
                                 <th class="min-w-25px">#</th>
+                                <th class="min-w-50px">اسم المنتج</th>
                                 <th class="min-w-50px">الصور</th>
                                 <th class="min-w-50px">التاجر</th>
                                 <th class="min-w-50px">النوع</th>
@@ -77,6 +78,7 @@
     <script>
         var columns = [
             {data: 'id', name: 'id'},
+            {data: 'title_ar', name: 'title_ar'},
             {data: 'images', name: 'images'},
             {data: 'vendor_id', name: 'vendor_id'},
             {data: 'type', name: 'type'},
@@ -89,7 +91,7 @@
 
         deleteScript('{{route('product.delete', ':id')}}');
 
-        
+
     </script>
 @endsection
 

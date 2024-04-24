@@ -99,7 +99,12 @@ class UserController extends Controller
     public function getCart(): JsonResponse
     {
         return $this->userRepositoryInterface->getCart();
-    } #|>  getCart
+    }#|>  getCart
+
+    public function storeComment(Request $request): JsonResponse
+    {
+        return $this->userRepositoryInterface->storeComment($request);
+    }
 
 
 }

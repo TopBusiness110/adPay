@@ -61,5 +61,6 @@
 
 <link href="{{ asset('assets/admin/assets/css/select2.min.css') }}" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+<link href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css" rel="stylesheet" type="text/css" />
 
 @yield('css')

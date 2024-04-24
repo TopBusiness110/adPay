@@ -74,7 +74,6 @@
     <script>
         var columns = [
             {data: 'id', name: 'id'},
-            {data: 'title_ar', name: 'title_ar'},
             {data: 'count', name: 'count'},
             {data: 'price', name: 'price'},
             {data: 'action', name: 'action', orderable: false, searchable: false},
@@ -83,7 +82,7 @@
 
         deleteScript('{{route('ad_packages.delete', ':id')}}');
 
-        
+
     </script>
 @endsection
 

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Repository;
 
@@ -22,7 +22,9 @@ class AdRepository implements AdInterface
                        ';
                 })
                 ->editColumn('user_id', function ($ads) {
-                    return $ads->user->name;
+                    return ($ads->user) ? $ads->user->name : '';
+                })->editcolumn('status', function ($ads) {
+                    return $ads->status == 1 ? 'مفعل' : 'غير مفعل';
                 })
                 ->editColumn('image', function ($ads) {
                     return '

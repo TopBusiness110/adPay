@@ -57,9 +57,7 @@
 
 @include('admin/layouts/scripts')
 
-<script>
-
-</script>
 @yield('ajaxCalls')
+
 </body>
 </html>
