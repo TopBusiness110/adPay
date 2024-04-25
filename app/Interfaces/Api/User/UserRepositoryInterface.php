@@ -127,10 +127,28 @@ interface UserRepositoryInterface
     public function getCart(): JsonResponse;
 
     /**
+     * @param $id
      * @return JsonResponse
      */
     public function auctionDetails($id): JsonResponse;
+
+    /**
+     * @param $request
+     * @return JsonResponse
+     */
     public function storeComment($request): JsonResponse;
+
+    /**
+     * @param $request
+     * @return JsonResponse
+     */
+    public function vendorProfile($request): JsonResponse;
+
+    /**
+     * @param $request
+     * @return JsonResponse
+     */
+    public function storeAuction($request): JsonResponse;
 
 }
 ###############|> Made By https://github.com/eldapour (eldapour) 🚀

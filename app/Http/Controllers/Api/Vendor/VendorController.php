@@ -53,10 +53,7 @@ public function updateSeen(): JsonResponse
     {
         return $this->vendorRepository->myWallet();
     } #|> myWallet
-      public function vendorProfile($id): JsonResponse
-    {
-        return $this->vendorRepository->vendorProfile($id);
-    } #|> myWallet
+
 
 
 }

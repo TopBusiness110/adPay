@@ -105,6 +105,15 @@ class UserController extends Controller
     {
         return $this->userRepositoryInterface->storeComment($request);
     }
+    public function vendorProfile(Request $request): JsonResponse
+    {
+        return $this->userRepositoryInterface->vendorProfile($request);
+    }
+
+    public function storeAuction(Request $request): JsonResponse
+    {
+        return $this->userRepositoryInterface->storeAuction($request);
+    }
 
 
 }

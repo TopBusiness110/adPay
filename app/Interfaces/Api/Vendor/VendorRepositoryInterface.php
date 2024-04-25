@@ -29,6 +29,5 @@ interface VendorRepositoryInterface
     public function sendMessage(Request $request,$id): JsonResponse;
     public function updateSeen(): JsonResponse;
     public function myWallet(): JsonResponse;
-    public function vendorProfile($id): JsonResponse;
 }
 ###############|> Made By https://github.com/eldapour (eldapour) 🚀
