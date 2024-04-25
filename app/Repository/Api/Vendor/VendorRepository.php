@@ -674,18 +674,6 @@ class VendorRepository extends ResponseApi implements VendorRepositoryInterface
         }
     } //storeComments
 
-    public function vendorProfile($id): JsonResponse
-    {
-        try {
-            $vendor = AppUser::find($id)->with('products')->first();
-            $data =[
-                'vendor' => new VendorResource($vendor),
-                'products' => ProductResource::collection($vendor->products),
-            ];
-            return self::returnDataSuccess($data, 'Vendor Retrieved Successfully');
-        } catch (Exception $e) {
-            return self::returnDataFail(null, $e->getMessage(), 500);
-        }
-    }
+
 } // eldapour
 ###############|> Made By https://github.com/eldapour (eldapour) 🚀
