@@ -15,6 +15,7 @@ use App\Models\AppUser;
 use App\Models\Auction;
 use App\Models\AuctionComment;
 use App\Models\Cart;
+use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Product;
 use App\Models\Shop;
@@ -551,7 +552,7 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
         } catch (Exception $exception) {
             return self::returnDataFail(null, $exception->getMessage(), 500);
         }
-    }
+    } // end auctionDetails
 
 
     public function storeComment($request): JsonResponse
@@ -582,6 +583,39 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
 
         } catch (Exception $exception) {
             return self::returnDataFail(null, $exception->getMessage(), 500);
+        }
+    } // end storeComment
+
+    public function myOrders($request): JsonResponse
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'type' => 'required|in:new,pending,complete,cancelled',
+            ]);
+
+            if ($validator->fails()) {
+                return self::returnDataFail(null, $validator->errors()->first(), 422);
+            }
+
+
+            $orders = Order::query()
+                ->where('type', $request->type)
+                ->where('user_id', \auth('user-api')->user()->id)->with('details')
+                ->latest()->get();
+
+            return self::returnDataSuccess($orders, 'get my orders success');
+
+        } catch (\Exception $exception) {
+            return self::returnDataFail(null, $exception->getMessage(), 500);
+        }
+    } // end myOrders
+
+    public function rateVendor($request): JsonResponse
+    {
+        try {
+//
+        }catch (\Exception $exception) {
+            //
         }
     }
 
