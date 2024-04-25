@@ -66,6 +66,12 @@ Route::group(['prefix' => 'user'], function () {
         Route::post('addAddress', [UserController::class, 'addAddress']);
         Route::post('updateAddress', [UserController::class, 'updateAddress']);
         Route::post('deleteAddress/{id}', [UserController::class, 'deleteAddress']);
+
+        // Order API
+        Route::get('myOrders', [UserController::class, 'myOrders']);
+        Route::get('order/d/{id}', [OrderController::class, 'orderDetails']);
+        Route::post('rateVendor', [UserController::class, 'rateVendor']);
+
     });
 
 

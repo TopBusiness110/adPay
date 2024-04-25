@@ -201,7 +201,11 @@ class VendorRepository extends ResponseApi implements VendorRepositoryInterface
     {
         try {
 
-            $order = Order::whereId($id)->with('details')->get();
+            $order = Order::whereId($id)->with('details')->first();
+
+            foreach ($order->details as $detail) {
+                $detail['product'] = new ProductResource($detail->product);
+            }
 
             if ($order->count() > 0) {
                 return self::returnDataSuccess($order, 'Get Order Successfully');

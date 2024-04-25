@@ -104,7 +104,18 @@ class UserController extends Controller
     public function storeComment(Request $request): JsonResponse
     {
         return $this->userRepositoryInterface->storeComment($request);
-    }
+    }#|>  storeComment
+
+    public function myOrders(Request $request): JsonResponse
+    {
+        return $this->userRepositoryInterface->myOrders($request);
+    }#|> myOrders
+
+    public function rateVendor(Request $request): JsonResponse
+    {
+        return $this->userRepositoryInterface->rateVendor($request);
+    }#|> rateVendor
+    
     public function vendorProfile(Request $request): JsonResponse
     {
         return $this->userRepositoryInterface->vendorProfile($request);
