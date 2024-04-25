@@ -619,5 +619,65 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
         }
     }
 
+    public function vendorProfile($request): JsonResponse
+    {
+        try {
+            $vendor = AppUser::whereId($request->id)
+                ->with('products', function ($query) use ($request) {
+                    $query->when($request->key, function ($query) use ($request) {
+                        $query->where('shop_sub_cat',  $request->key );
+                    });
+                })
+                ->first();
+            $data = [
+                'vendor' => new VendorResource($vendor),
+                'products' => ProductResource::collection($vendor->products),
+            ];
+            return self::returnDataSuccess($data, 'Vendor Retrieved Successfully');
+        } catch (Exception $e) {
+            return self::returnDataFail(null, $e->getMessage(), 500);
+        }
+    }
+
+    public function storeAuction($request): JsonResponse
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'images' => 'required|image',
+                'title_ar' => 'required',
+                'description_ar' => 'required|string',
+                'user_id' => 'required|exists:app_users,id',
+                'price' => 'required|numeric',
+                'cat_id' => 'required|exists:auction_categories,id',
+                'sub_cat_id' => 'required|exists:auction_sub_categories,id',
+            ]);
+
+            if ($validator->fails()) {
+                return self::returnDataFail(null, $validator->errors()->first(), 422);
+            }
+            if ($request->hasFile('images')) {
+
+                $imagePath = $request->file('images')->store('uploads/auction', 'public');
+
+            } else {
+                $imagePath=[];
+            }
+
+            $auction = new Auction();
+            $auction->images = $imagePath;
+            $auction->title_ar = $request->title_ar;
+            $auction->description_ar = $request->description_ar ?? null;
+            $auction->user_id = $request->user_id;
+            $auction->price = $request->price;
+            $auction->cat_id = $request->cat_id;
+            $auction->sub_cat_id = $request->sub_cat_id;
+            $auction->save();
+            return self::returnDataSuccess($auction, 'Auction Created Successfully');
+        } catch (Exception $e) {
+            return self::returnDataFail(null, $e->getMessage(), 500);
+        }
+    }
+
+
 } // eldapour
 ###############|> Made By https://github.com/eldapour (eldapour) 🚀

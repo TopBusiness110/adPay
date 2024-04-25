@@ -54,6 +54,9 @@ Route::group(['prefix' => 'user'], function () {
         Route::get('productDetails/{id}', [UserController::class, 'productDetails']);
         Route::get('auctionDetails/{id}', [UserController::class, 'auctionDetails']);
         Route::post('storeComment', [UserController::class, 'storeComment']);
+        Route::get('vendorProfile/{id}', [UserController::class, 'vendorProfile']);
+        Route::post('storeAuction', [UserController::class, 'storeAuction']);
+
 
         Route::post('addToCart', [UserController::class, 'addToCart']);
         Route::get('getCart', [UserController::class, 'getCart']);
@@ -112,7 +115,6 @@ Route::group(['prefix' => 'vendor'], function () {
         Route::post('room/{id}/sendMessage', [VendorController::class, 'sendMessage']);
         Route::post('room/updateSeen', [VendorController::class, 'updateSeen']);
         Route::get('myWallet', [VendorController::class, 'myWallet']);
-        Route::post('vendorProfile/{id}', [VendorController::class, 'vendorProfile']);
 
 
         // products

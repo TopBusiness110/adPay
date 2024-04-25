@@ -142,9 +142,19 @@ interface UserRepositoryInterface
      * @param $request
      * @return JsonResponse
      */
+
     public function myOrders($request): JsonResponse;
 
     public function rateVendor($request): JsonResponse;
+
+    public function vendorProfile($request): JsonResponse;
+
+    /**
+     * @param $request
+     * @return JsonResponse
+     */
+    public function storeAuction($request): JsonResponse;
+
 
 }
 ###############|> Made By https://github.com/eldapour (eldapour) 🚀
