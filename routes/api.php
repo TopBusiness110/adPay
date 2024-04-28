@@ -41,6 +41,7 @@ Route::group(['prefix' => 'user'], function () {
     #|> User Authentication
     Route::post('register', [UserController::class, 'register']);
 
+
     #|> User Actions
     Route::group(['middleware' => 'jwt'],function () {
         Route::get('getHome', [UserController::class, 'getHome']);
@@ -49,18 +50,27 @@ Route::group(['prefix' => 'user'], function () {
         Route::get('getCityByRegion', [UserController::class, 'getCityByRegion']);
         Route::get('getProducts', [UserController::class, 'getProducts']);
         Route::get('getAuctions', [UserController::class, 'getAuctions']);
+        Route::get('getMyAuctions', [UserController::class, 'getMyAuctions']);
         Route::get('getShops', [UserController::class, 'getShops']);
         Route::get('getAds', [UserController::class, 'getAds']);
-        Route::get('productDetails/{id}', [UserController::class, 'productDetails']);
         Route::get('auctionDetails/{id}', [UserController::class, 'auctionDetails']);
+        Route::get('productDetails/{id}', [UserController::class, 'productDetails']);
+        Route::get('myAuctionDetails/{id}', [UserController::class, 'myAuctionDetails']);
+        Route::get('isSold/{id}', [UserController::class, 'isSold']);
+        Route::post('editMyAuction/{id}', [UserController::class, 'editMyAuction']);
         Route::post('storeComment', [UserController::class, 'storeComment']);
         Route::get('vendorProfile/{id}', [UserController::class, 'vendorProfile']);
         Route::post('storeAuction', [UserController::class, 'storeAuction']);
+        Route::post('storeFavorite', [UserController::class, 'storeFavorite']);
+        Route::get('myFavorite', [UserController::class, 'myFavorite']);
+
         Route::post('sendContactUs', [UserController::class, 'sendContactUs']);
 
 
         Route::post('addToCart', [UserController::class, 'addToCart']);
         Route::get('getCart', [UserController::class, 'getCart']);
+        Route::post('emptyCard', [UserController::class, 'emptyCard']);
+        Route::post('deleteFromCart', [UserController::class, 'deleteFromCart']);
 
         // ADDRESS API
         Route::get('myAddresses', [UserController::class, 'myAddresses']);
@@ -72,6 +82,11 @@ Route::group(['prefix' => 'user'], function () {
         Route::get('myOrders', [UserController::class, 'myOrders']);
         Route::get('order/d/{id}', [OrderController::class, 'orderDetails']);
         Route::post('rateVendor', [UserController::class, 'rateVendor']);
+
+        //profile
+        Route::post('updateProfile', [UserController::class, 'updateProfile']);
+//        Route::post('updateProfile', function (){ return 4;});
+
 
     });
 

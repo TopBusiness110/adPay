@@ -121,15 +121,75 @@ class UserController extends Controller
         return $this->userRepositoryInterface->vendorProfile($request);
     }
 
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function storeAuction(Request $request): JsonResponse
     {
         return $this->userRepositoryInterface->storeAuction($request);
+    }
+
+    /**
+     * @return JsonResponse
+     */
+
+    public function emptyCard(): JsonResponse
+    {
+        return $this->userRepositoryInterface->emptyCard();
+    }
+
+    /**
+     * @return JsonResponse
+     */
+    public function deleteFromCart(Request $request): JsonResponse
+    {
+        return $this->userRepositoryInterface->deleteFromCart( $request);
+    }
+
+    public function getMyAuctions(Request $request): JsonResponse
+    {
+        return $this->userRepositoryInterface->getMyAuctions( $request);
+    }
+
+
+   public function myAuctionDetails(Request $request): JsonResponse
+    {
+        return $this->userRepositoryInterface->myAuctionDetails($request);
+    }
+
+    public function isSold(Request $request): JsonResponse
+    {
+        return $this->userRepositoryInterface->isSold($request);
+    }
+
+
+    public function editMyAuction(Request $request): JsonResponse
+    {
+        return $this->userRepositoryInterface->editMyAuction($request);
+    }
+
+    public function storeFavorite(Request $request): JsonResponse
+    {
+        return $this->userRepositoryInterface->storeFavorite($request);
+    }
+
+     public function myFavorite(): JsonResponse
+    {
+        return $this->userRepositoryInterface->myFavorite();
+    }
+
+    public function updateProfile(Request $request): JsonResponse
+    {
+//        return response()->json($request->all());
+        return $this->userRepositoryInterface->updateProfile( $request);
     }
 
     public function sendContactUs(Request $request): JsonResponse
     {
         return $this->userRepositoryInterface->sendContactUs($request);
     }
+
 
 }
 ###############|> Made By https://github.com/eldapour (eldapour) 🚀

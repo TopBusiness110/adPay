@@ -25,6 +25,7 @@ class Auction extends Model
         'price',
         'is_sold',
         'sub_cat_id',
+        'is_sold',
     ];
 
     protected $casts = [

@@ -28,7 +28,7 @@ class AdRepository implements AdInterface
                 })
                 ->editColumn('image', function ($ads) {
                     return '
-                    <img alt="image" onclick="window.open(this.src)" class="avatar avatar-md rounded-circle" src="' . asset('storage/' . $ads->image) . '">
+                    <img alt="image" onclick="window.open(this.src)" class="avatar avatar-md rounded-circle" src="' . asset( $ads->image) . '">
                     ';
                 })
                 ->escapeColumns([])
