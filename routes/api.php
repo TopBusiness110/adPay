@@ -56,6 +56,7 @@ Route::group(['prefix' => 'user'], function () {
         Route::post('storeComment', [UserController::class, 'storeComment']);
         Route::get('vendorProfile/{id}', [UserController::class, 'vendorProfile']);
         Route::post('storeAuction', [UserController::class, 'storeAuction']);
+        Route::post('sendContactUs', [UserController::class, 'sendContactUs']);
 
 
         Route::post('addToCart', [UserController::class, 'addToCart']);
