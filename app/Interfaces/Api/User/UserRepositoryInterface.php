@@ -216,6 +216,8 @@ interface UserRepositoryInterface
      */
     public function myAccount(): JsonResponse;
 
+    public function myCoins(): JsonResponse;
+
 
 }
 ###############|> Made By https://github.com/eldapour (eldapour) 🚀

@@ -123,6 +123,7 @@
             showData(ajax, columns)
         })
     </script>
+
 @endsection
 
 

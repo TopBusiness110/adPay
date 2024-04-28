@@ -10,8 +10,13 @@ class AppUserRepository implements AppUserInterface
 {
     public function index($request)
     {
+        $app_users = AppUser::query();
         if ($request->ajax()) {
-            $app_users = AppUser::get();
+            if ($request->has('status') && $request->status !== 'all') {
+                $app_users = AppUser::where('type', $request->status);
+            }
+            $app_users = $app_users->latest()->get();
+
             return DataTables::of($app_users)
                 ->addColumn('action', function ($app_users) {
                     return '
@@ -20,6 +25,11 @@ class AppUserRepository implements AppUserInterface
                                         <i class="fas fa-trash"></i>
                                 </button>
                        ';
+                })
+                ->editColumn('status', function ($app_users) {
+                    return '<input class="tgl tgl-ios statusBtn" data-id="'. $app_users->id .'" name="statusBtn" id="statusUser-' . $app_users->id . '" type="checkbox" '. ($app_users->status == 1 ? 'checked' : 'unchecked') .'/>
+                    <label class="tgl-btn" dir="ltr" for="statusUser-' . $app_users->id . '"></label>';
+
                 })
                 ->editColumn('type', function ($app_users) {
                     if ($app_users->type == 'user') {
@@ -41,6 +51,13 @@ class AppUserRepository implements AppUserInterface
         } else {
             return view('admin/app_users/index');
         }
+    }
+
+    public function changeUserStatus($request)
+    {
+        $app_user = AppUser::find($request->id);
+        $app_user->status = $request->status;
+        $app_user->save();
     }
 
     public function delete($request)

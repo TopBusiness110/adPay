@@ -3,6 +3,7 @@
 namespace App\Repository\Api\User;
 
 
+use App\Http\Resources\AdResource;
 use App\Http\Resources\AuctionResource;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\UserResource;
@@ -18,6 +19,7 @@ use App\Models\contactUs;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Product;
+use App\Models\Setting;
 use App\Models\Shop;
 use App\Models\ShopCategory;
 use App\Models\Slider;
@@ -35,6 +37,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use function Symfony\Component\String\s;
 
 class UserRepository extends ResponseApi implements UserRepositoryInterface
 {
@@ -58,7 +61,7 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
 
             $newUser = new AppUser();
             if ($request->has('image')) {
-                $newUser->image = self::uploadImage($request->image,'users');
+                $newUser->image = self::uploadImage($request->image, 'users');
             }
             $newUser->name = $request->name;
             $newUser->phone = $request->phone;
@@ -734,9 +737,9 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
                 return self::returnDataFail(null, $errors, 422);
             }
 
-            $product=Cart::where('user_id',$request->user_id)
-                      ->where('product_id',$request->product_id)->first();
-            if (!$product){
+            $product = Cart::where('user_id', $request->user_id)
+                ->where('product_id', $request->product_id)->first();
+            if (!$product) {
                 return self::returnDataFail(null, 'Product not found', 404);
             }
 
@@ -746,7 +749,6 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
             return self::returnDataFail(null, $e->getMessage(), 500);
 
         }
-
 
 
     }
@@ -763,7 +765,7 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
                 $errors = $validator->errors()->first();
                 return self::returnDataFail(null, $errors, 422);
             }
-            $auctions=Auction::where('user_id',$request->user_id)->get();
+            $auctions = Auction::where('user_id', $request->user_id)->get();
 
 //            $myAuctions = new Collection();
 //
@@ -777,7 +779,6 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
             $myAuctions = AuctionResource::collection($auctions);
 
 
-
             return self::returnDataSuccess($myAuctions, 'Product Deleted Successfully');
         } catch (Exception $e) {
             return self::returnDataFail(null, $e->getMessage(), 500);
@@ -787,14 +788,14 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
     }
 
 
-    Public function myAuctionDetails($request): JsonResponse
+    public function myAuctionDetails($request): JsonResponse
     {
 
         try {
             $auction = Auction::where('id', $request->id)
-                    ->where('user_id', Auth::guard('user-api')->user()->id)
+                ->where('user_id', Auth::guard('user-api')->user()->id)
                 ->first();
-            if (!$auction){
+            if (!$auction) {
                 return self::returnDataFail(null, 'Product not found', 404);
             }
             $data = [
@@ -808,7 +809,7 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
     }
 
 
-    Public function isSold($request): JsonResponse
+    public function isSold($request): JsonResponse
     {
 //        return response()->json($request->id);
 
@@ -816,7 +817,7 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
             $auction = Auction::where('id', $request->id)
                 ->where('user_id', Auth::guard('user-api')->user()->id)
                 ->first();
-            if (!$auction){
+            if (!$auction) {
                 return self::returnDataFail(null, 'Product not found', 404);
             }
             $auction->is_sold = 1;
@@ -851,25 +852,25 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
                 $errors = $validator->errors()->first();
                 return self::returnDataFail(null, $errors, 422);
             }
-            $auction = Auction::where('id',$request->auction_id)
-                ->where('is_sold',0)
+            $auction = Auction::where('id', $request->auction_id)
+                ->where('is_sold', 0)
                 ->first();
-            if (!$auction){
+            if (!$auction) {
                 return self::returnDataFail(null, 'Product not found', 404);
             }
             if ($request->hasFile('images')) {
 //                $imagePath = $request->file('images')->store('uploads/auction', 'public');
-                $imagePath = self::uploadImage($request->images,'auctions');
+                $imagePath = self::uploadImage($request->images, 'auctions');
 
                 {
 
-                        if (Storage::disk('public')->exists($auction->image)) {
+                    if (Storage::disk('public')->exists($auction->image)) {
 
-                            Storage::disk('public')->delete($auction->image);
-                        }
-
+                        Storage::disk('public')->delete($auction->image);
                     }
+
                 }
+            }
             $auction->images = $imagePath;
             $auction->title_ar = $request->title_ar;
             $auction->description_ar = $request->description_ar ?? null;
@@ -877,8 +878,6 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
             $auction->cat_id = $request->cat_id;
             $auction->sub_cat_id = $request->sub_cat_id;
             $auction->save();
-
-
 
 
             return self::returnDataSuccess(null, 'Product has been updated successfully');
@@ -921,7 +920,6 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
             return self::returnDataSuccess(null, 'Product has been added to favorite successfully');
 
 
-
         } catch (Exception $e) {
             return self::returnDataFail(null, $e->getMessage(), 500);
         }
@@ -946,7 +944,6 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
             return self::returnDataSuccess($favorite, 'Data fetched successfully');
 
 
-
         } catch (Exception $e) {
             return self::returnDataFail(null, $e->getMessage(), 500);
         }
@@ -958,51 +955,48 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
     {
 
         try {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'image' => 'nullable|image',
-            'phone' => 'required|numeric|unique:app_users,phone,'.Auth::guard('user-api')->user()->id,
-            'password' => 'required',
-            'device_token' => 'required',
-        ]);
+            $validator = Validator::make($request->all(), [
+                'name' => 'required',
+                'image' => 'nullable|image',
+                'phone' => 'required|numeric|unique:app_users,phone,' . Auth::guard('user-api')->user()->id,
+                'password' => 'required',
+                'device_token' => 'required',
+            ]);
 
-        if ($validator->fails()) {
-            $errors = $validator->errors()->first();
-            return self::returnDataFail(null, $errors, 422);
-        }
-
-
-
-         $editUser = AppUser::where('id', Auth::guard('user-api')->user()->id)
-                  ->first();
+            if ($validator->fails()) {
+                $errors = $validator->errors()->first();
+                return self::returnDataFail(null, $errors, 422);
+            }
 
 
+            $editUser = AppUser::where('id', Auth::guard('user-api')->user()->id)
+                ->first();
 
-        if ($request->has('image')) {
-            $editUser->image = self::uploadImage($request->image, 'users');
+
+            if ($request->has('image')) {
+                $editUser->image = self::uploadImage($request->image, 'users');
 //            $editUser->image = self::deleteImage($request->image, 'users');
-        }
-        $editUser->name = $request->name;
-        $editUser->phone = $request->phone;
-        $editUser->password = Hash::make($request->password);
-        $editUser->type = 'user';
-        $editUser->device_token = $request->device_token;
+            }
+            $editUser->name = $request->name;
+            $editUser->phone = $request->phone;
+            $editUser->password = Hash::make($request->password);
+            $editUser->type = 'user';
+            $editUser->device_token = $request->device_token;
 
-        if ($editUser->save()) {
+            if ($editUser->save()) {
 
-            $credentials = ['phone' => $request->phone, 'password' => $request->password];
-            $token = Auth::guard('user-api')->attempt($credentials);
-            $editUser['token'] = $token;
+                $credentials = ['phone' => $request->phone, 'password' => $request->password];
+                $token = Auth::guard('user-api')->attempt($credentials);
+                $editUser['token'] = $token;
 
-            return self::returnDataSuccess(new UserResource($editUser), 'User Register Success');
+                return self::returnDataSuccess(new UserResource($editUser), 'User Register Success');
 
 
-        }else {
+            } else {
 
-            return self::returnDataFail(null, 'User Register Failed', 500);
-        }
-    }
-        catch (Exception $e) {
+                return self::returnDataFail(null, 'User Register Failed', 500);
+            }
+        } catch (Exception $e) {
             return self::returnDataFail(null, $e->getMessage(), 500);
         }
 
@@ -1027,8 +1021,8 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
             $contactUs->message = $request->message;
             $contactUs->user_id = Auth::guard('user-api')->user()->id;
             if ($contactUs->save()) {
-            return self::returnDataSuccess($contactUs, 'Message Sent Successfully !');
-            }else{
+                return self::returnDataSuccess($contactUs, 'Message Sent Successfully !');
+            } else {
                 return self::returnDataFail(null, 'Something went wrong', 500);
             }
         } catch (Exception $e) {
@@ -1040,9 +1034,9 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
     {
         try {
 
-            $auth= Auth::guard('user-api')->user()->id;
+            $auth = Auth::guard('user-api')->user()->id;
 
-            $user = AppUser::where('id',$auth)
+            $user = AppUser::where('id', $auth)
                 ->withCount('orders')
                 ->withCount('auctions')
                 ->withCount('viewAds')
@@ -1050,8 +1044,7 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
 
             if (!$user) {
                 return self::returnDataFail(null, 'User not found', 404);
-            }
-            else{
+            } else {
 
                 return self::returnDataSuccess($user, 'Data fetched successfully');
             }
@@ -1061,8 +1054,34 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
         }
 
 
-    }
+    }// end my account
 
+    public function myCoins(): JsonResponse
+    {
+        try {
+
+            $auth = Auth::guard('user-api')->user()->id;
+            $user = AppUser::where('id', $auth)->first();
+            $config_point = Setting::value('point_video');
+            $ads = Ad::whereUserId($auth)->get();
+            $data = [
+                'user' => new UserResource($user),
+                'ads'=> AdResource::collection($ads),
+                'config_point' => $config_point,
+            ];
+            if (!$user) {
+                return self::returnDataFail(null, 'User not found', 404);
+            } else {
+
+                return self::returnDataSuccess($data, 'Data fetched successfully');
+            }
+
+        } catch (Exception $e) {
+
+        } catch (Exception $e) {
+            return self::returnDataFail(null, $e->getMessage(), 500);
+        }
+    }
 
 
 } // eldapour

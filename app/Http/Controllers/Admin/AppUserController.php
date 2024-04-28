@@ -24,4 +24,8 @@ class AppUserController extends Controller
     {
         return $this->appUserInterface->delete($request);
     }
+    public function changeUserStatus(Request $request)
+    {
+        return $this->appUserInterface->changeUserStatus($request);
+    }
 }

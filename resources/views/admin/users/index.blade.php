@@ -13,7 +13,9 @@
                 <div class="card-header">
                     <h3 class="card-title"> المستخدمين  {{($setting->name_en) ?? ''}}</h3>
                 </div>
+
                 <div class="card-body">
+
                     <div class="table-responsive">
                         <!--begin::Table-->
                         <table class="table table-striped table-bordered text-nowrap w-100" id="dataTable">
