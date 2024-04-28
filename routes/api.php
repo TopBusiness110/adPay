@@ -85,7 +85,7 @@ Route::group(['prefix' => 'user'], function () {
 
         //profile
         Route::post('updateProfile', [UserController::class, 'updateProfile']);
-//        Route::post('updateProfile', function (){ return 4;});
+        Route::get('myAccount', [UserController::class, 'myAccount']);
 
 
     });

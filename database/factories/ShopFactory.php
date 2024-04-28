@@ -23,7 +23,7 @@ class ShopFactory extends Factory
             'title_en' => $this->faker->name(),
             'shop_cat_id' => rand(1,50),
             'shop_sub_cat' => rand(1,50),
-            'vendor_id'
+//            'vendor_id'=>rand(1,50),
         ];
     }
 }

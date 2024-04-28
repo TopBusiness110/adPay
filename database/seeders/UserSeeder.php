@@ -25,7 +25,7 @@ class UserSeeder extends Seeder
         AppUser::factory()->count(50)->create()->each(function ($user) {
             $user->addresses()->save(Address::factory()->make());
             $user->ads()->save(Ad::factory()->make());
-            $user->shops()->save(Shop::factory()->make());
+//            $user->shop()->save(Shop::factory()->make());
             $user->auctions()->save(Auction::factory()->make());
         });
     }
