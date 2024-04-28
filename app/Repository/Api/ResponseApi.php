@@ -43,7 +43,7 @@ class ResponseApi
     {
         return $this->sendFirebaseNotification($data, $user_id,true);
     }
-    public static function uploadImage($image, $folder = null)
+    public static function uploadImage($image, $folder = null): string
     {
         $path = $image->store('uploads/'.$folder??'default'.'/images', 'public');
         return '/storage/' . $path;
