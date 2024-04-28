@@ -45,12 +45,6 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth:user'], function () {
     Route::get('my_profile', [AdminController::class, 'myProfile'])->name('myProfile');
     Route::get('logout', [AuthController::class, 'logout'])->name('admin.logout');
 
-    #============================ users ====================================
-    Route::get('users', [UserController::class, 'index'])->name('users.index');
-    Route::delete('user/{id}/delete', [UserController::class, 'delete'])->name('user_delete');
-    Route::post('change-status-user', [UserController::class, 'changeStatusUser'])->name('changeStatusUser');
-
-
 
     #============================ AdPackage =====================================
     Route::get('ad_packages', [AdPackageController::class, 'index'])->name('ad_packages.index');
@@ -83,6 +77,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth:user'], function () {
     #============================ App User =====================================
     Route::get('app_users', [AppUserController::class, 'index'])->name('appUsers.index');
     Route::delete('app_user/{id}/delete', [AppUserController::class, 'delete'])->name('appUser.delete');
+    Route::post('changeUserStatus', [AppUserController::class, 'changeUserStatus'])->name('changeUserStatus');
 
     #============================ Auction =====================================
     Route::get('auctions', [AuctionController::class, 'index'])->name('auctions.index');

@@ -21,6 +21,16 @@
 									</span> اضافة جديد
                         </button>
                     </a> --}}
+
+                    <div class="">
+                        <label class="form-label">فلترة المستخدمين</label>
+                        <select id="status-filter">
+                            <option value="all">الكل</option>
+                            <option value="advertise">معلن</option>
+                            <option value="user">مستخدم</option>
+                            <option value="vendor">تاجر</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -33,6 +43,7 @@
                                 <th class="min-w-50px">الاسم</th>
                                 <th class="min-w-50px">الرقم</th>
                                 <th class="min-w-50px">النوع</th>
+                                <th class="min-w-50px">الحالة</th>
                                 <th class="min-w-50px rounded-end">العمليات</th>
                             </tr>
                             </thead>
@@ -79,14 +90,61 @@
             {data: 'name', name: 'name'},
             {data: 'phone', name: 'phone'},
             {data: 'type', name: 'type'},
+            {data: 'status', name: 'status'},
             {data: 'action', name: 'action', orderable: false, searchable: false},
         ]
-        showData('{{route('appUsers.index')}}', columns);
 
         deleteScript('{{route('appUser.delete', ':id')}}');
 
-        
+        let ajax = {
+            url: '{{route('appUsers.index')}}',
+            data: function (d) {
+                d.status = $('#status-filter').val(); // Assuming you have a select input with the id 'status-filter'
+            }
+        };
+        showData(ajax, columns);
+
+        $('#status-filter').on('change', function () {
+            $('#dataTable').DataTable().destroy();
+            ajax.data = function (d) {
+                d.status = $('#status-filter').val(); // Assuming you have a select input with the id 'status-filter'
+            }
+            showData(ajax, columns)
+        })
+
+
+
     </script>
+
+<script>
+
+    $(document).on('click', '.statusBtn', function() {
+        var id = $(this).data('id');
+        var val = $(this).is(':checked') ? 1 : 0;
+
+        $.ajax({
+            url: '{{ route('changeUserStatus') }}',
+            type: 'post',
+            data: {
+                "_token": "{{ csrf_token() }}",
+                'id': id,
+                'status': val
+            },
+            success: function(data) {
+
+                // Check if val is not equal to 0 before executing toastr.success()
+                if (val !== 0) {
+                    toastr.success('Success', 'تم التفعيل بنجاح');
+                }
+                else
+                {
+                    toastr.warning('Success', 'تم الغاء التفعيل');
+                }
+            },
+        });
+    });
+</script>
+
 @endsection
 
 

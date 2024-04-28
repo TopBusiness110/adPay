@@ -87,6 +87,11 @@ Route::group(['prefix' => 'user'], function () {
         Route::post('updateProfile', [UserController::class, 'updateProfile']);
         Route::get('myAccount', [UserController::class, 'myAccount']);
 
+        //My points
+        Route::get('myCoins', [UserController::class, 'myCoins']);
+
+
+
 
     });
 

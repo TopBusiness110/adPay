@@ -6,7 +6,7 @@
     <ul class="side-menu">
         <li><h3>العناصر</h3></li>
         <li class="slide">
-            <a class="side-menu__item" href="">
+            <a class="side-menu__item" href="{{route('adminHome')}}">
                 <i class="fa fa-home side-menu__icon"></i>
                 <span class="side-menu__label">الرئيسية</span>
             </a>
