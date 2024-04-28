@@ -187,11 +187,34 @@ interface UserRepositoryInterface
      * @return JsonResponse
      */
     public function storeFavorite($request): JsonResponse;
+
+    /**
+     * @return JsonResponse
+     */
     public function myFavorite(): JsonResponse;
+
+    /**
+     * @param $request
+     * @return JsonResponse
+     */
 
     public function updateProfile($request): JsonResponse;
 
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+
     public function sendContactUs(Request $request): JsonResponse;
+    /**
+     *
+     */
+
+    /**
+     * @param $id
+     * @return JsonResponse
+     */
+    public function myAccount(): JsonResponse;
 
 
 }

@@ -94,7 +94,6 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
             if ($validatorLogin->fails()) {
                 $errors = $validatorLogin->errors()->first();
                 return self::returnDataFail(null, $errors, 422);
-
             } else {
                 $check_exists = AppUser::query()
                     ->where('phone', '=', $request->phone)
@@ -105,7 +104,7 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
                     $credentials = ['phone' => $request->phone, 'password' => $request->password];
                     $token = Auth::guard('user-api')->attempt($credentials);
                     if (!$token) {
-                        return self::returnDataFail(null, 'phone or password is not correct !', 200);
+                        return self::returnDataFail(null, 'Invalid credentials', 200);
                     }
                     // Get User and Attach Token
                     $user = Auth::guard('user-api')->user();
@@ -115,12 +114,13 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
 
                     return self::returnDataSuccess(new UserResource($user), 'login success');
                 }
-                return self::returnDataFail(null, 'user not exists', 200);
+                return self::returnDataFail(null, 'Invalid credentials', 200);
             }
         } catch (Exception $exception) {
             return self::returnDataFail(null, $exception->getMessage(), 500);
         }
-    }// end login
+    }
+
 
     public function logout(): JsonResponse
     {
@@ -961,7 +961,7 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'image' => 'nullable|image',
-            'phone' => 'required|numeric|exists:app_users,phone',
+            'phone' => 'required|numeric|unique:app_users,phone,'.Auth::guard('user-api')->user()->id,
             'password' => 'required',
             'device_token' => 'required',
         ]);
@@ -1008,6 +1008,7 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
 
     } // end storeAuction
 
+
     public function sendContactUs(Request $request): JsonResponse
     {
         try {
@@ -1034,6 +1035,33 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
             return self::returnDataFail(null, $e->getMessage(), 500);
         }
     } // end sendContactUs
+
+    public function myAccount(): JsonResponse
+    {
+        try {
+
+            $auth= Auth::guard('user-api')->user()->id;
+
+            $user = AppUser::where('id',$auth)
+                ->withCount('orders')
+                ->withCount('auctions')
+                ->withCount('viewAds')
+                ->first();
+
+            if (!$user) {
+                return self::returnDataFail(null, 'User not found', 404);
+            }
+            else{
+
+                return self::returnDataSuccess($user, 'Data fetched successfully');
+            }
+
+        } catch (Exception $e) {
+            return self::returnDataFail(null, $e->getMessage(), 500);
+        }
+
+
+    }
 
 
 
