@@ -9,6 +9,7 @@ use App\Models\AppUser;
 use App\Models\Auction;
 use App\Models\Product;
 use App\Models\Shop;
+use App\Models\UserViewAd;
 use Illuminate\Database\Seeder;
 
 class UserSeeder extends Seeder
