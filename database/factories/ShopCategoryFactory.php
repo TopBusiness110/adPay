@@ -2,27 +2,24 @@
 
 namespace Database\Factories;
 
-use App\Models\Shop;
+use App\Models\ShopCategory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class ShopFactory extends Factory
+class ShopCategoryFactory extends Factory
 {
     /**
      * Define the model's default state.
      *
      * @return array
      */
-    protected $model = Shop::class;
+    protected $model = ShopCategory::class;
 
     public function definition()
     {
         return [
-            'logo' => 'upload/users/avatar.png',
-            'banner' => 'upload/users/avatar.png',
             'title_ar' => $this->faker->name(),
             'title_en' => $this->faker->name(),
-            'shop_cat_id' => rand(1,50),
-            'shop_sub_cat' => ["men","women","kids"],
+            'status' => rand(0, 1),
         ];
     }
 }

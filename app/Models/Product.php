@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Product extends Model
 {
+    use HasFactory;
     protected $table = 'products';
 
     public function product(): BelongsTo

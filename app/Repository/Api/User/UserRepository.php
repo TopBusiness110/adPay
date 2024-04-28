@@ -1006,9 +1006,8 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
             return self::returnDataFail(null, $e->getMessage(), 500);
         }
 
-    }
+    } // end storeAuction
 
-    // end storeAuction
 
     public function sendContactUs(Request $request): JsonResponse
     {
