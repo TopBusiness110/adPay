@@ -22,6 +22,7 @@ class CreateAppUsersTable extends Migration
             $table->bigInteger('phone');
             $table->text('password');
             $table->boolean('verified_at')->default(0);
+            $table->bigInteger('points')->default(0);
             $table->enum('type', ['user', 'vendor', 'advertise']);
             $table->longText('device_token');
             $table->boolean('status')->default(1);
