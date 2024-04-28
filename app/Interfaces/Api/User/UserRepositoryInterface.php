@@ -145,8 +145,16 @@ interface UserRepositoryInterface
 
     public function myOrders($request): JsonResponse;
 
+    /**
+     * @param $request
+     * @return JsonResponse
+     */
     public function rateVendor($request): JsonResponse;
 
+    /**
+     * @param $request
+     * @return JsonResponse
+     */
     public function vendorProfile($request): JsonResponse;
 
     /**
@@ -182,6 +190,8 @@ interface UserRepositoryInterface
     public function myFavorite(): JsonResponse;
 
     public function updateProfile($request): JsonResponse;
+
+    public function sendContactUs(Request $request): JsonResponse;
 
 
 }

@@ -179,19 +179,16 @@ class UserController extends Controller
         return $this->userRepositoryInterface->myFavorite();
     }
 
-
-
-
-
     public function updateProfile(Request $request): JsonResponse
     {
 //        return response()->json($request->all());
         return $this->userRepositoryInterface->updateProfile( $request);
     }
 
-
-
-
+    public function sendContactUs(Request $request): JsonResponse
+    {
+        return $this->userRepositoryInterface->sendContactUs($request);
+    }
 
 
 }

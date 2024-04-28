@@ -5,7 +5,6 @@ namespace App\Repository\Api\User;
 
 use App\Http\Resources\AuctionResource;
 use App\Http\Resources\ProductResource;
-use App\Http\Resources\ShopResource;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\VendorResource;
 use App\Interfaces\Api\User\UserRepositoryInterface;
@@ -15,6 +14,7 @@ use App\Models\AppUser;
 use App\Models\Auction;
 use App\Models\AuctionComment;
 use App\Models\Cart;
+use App\Models\contactUs;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Product;
@@ -22,6 +22,7 @@ use App\Models\Shop;
 use App\Models\ShopCategory;
 use App\Models\Slider;
 use App\Models\Wishlist;
+use App\Models\VendorRate;
 use App\Repository\Api\ResponseApi;
 use App\Traits\FirebaseNotification;
 use App\Traits\PhotoTrait;
@@ -34,7 +35,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 
 class UserRepository extends ResponseApi implements UserRepositoryInterface
 {
@@ -616,11 +616,35 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
     public function rateVendor($request): JsonResponse
     {
         try {
-//
-        }catch (\Exception $exception) {
-            //
+            $validator = Validator::make($request->all(), [
+                'rate' => 'required|in:1,2,3,4,5',
+                'vendor_id' => 'required|exists:app_users,id',
+                'description' => 'nullable|string',
+            ]);
+
+            if ($validator->fails()) {
+                return self::returnDataFail(null, $validator->errors()->first(), 422);
+            }
+
+            $checkRate = VendorRate::whereUserId(\auth('user-api')->user()->id)->whereVendorId($request->vendor_id)->first();
+            if ($checkRate) {
+                return self::returnDataFail($checkRate, 'You have already rated this vendor', 201);
+            }
+            $rate = new VendorRate();
+            $rate->user_id = \auth('user-api')->user()->id;
+            $rate->vendor_id = $request->vendor_id;
+            $rate->rate = $request->rate;
+            $rate->description = $request->description;
+
+            if ($rate->save()) {
+                return self::returnDataSuccess($rate, 'Vendor rated successfully');
+            } else {
+                return self::returnDataFail(null, 'Something went wrong', 500);
+            }
+        } catch (\Exception $exception) {
+            return self::returnDataFail(null, $exception->getMessage(), 500);
         }
-    }
+    }// end rateVendor
 
     public function vendorProfile($request): JsonResponse
     {
@@ -628,7 +652,7 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
             $vendor = AppUser::whereId($request->id)
                 ->with('products', function ($query) use ($request) {
                     $query->when($request->key, function ($query) use ($request) {
-                        $query->where('shop_sub_cat',  $request->key );
+                        $query->where('shop_sub_cat', $request->key);
                     });
                 })
                 ->first();
@@ -640,7 +664,7 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
         } catch (Exception $e) {
             return self::returnDataFail(null, $e->getMessage(), 500);
         }
-    }
+    } // end vendorProfile
 
     public function storeAuction($request): JsonResponse
     {
@@ -663,7 +687,7 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
                 $imagePath = $request->file('images')->store('uploads/auction', 'public');
 
             } else {
-                $imagePath=[];
+                $imagePath = [];
             }
 
             $auction = new Auction();
@@ -679,8 +703,6 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
         } catch (Exception $e) {
             return self::returnDataFail(null, $e->getMessage(), 500);
         }
-
-
     }
 
     public function emptyCard(): JsonResponse
@@ -985,6 +1007,36 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
         }
 
     }
+
+    } // end storeAuction
+
+    public function sendContactUs(Request $request): JsonResponse
+    {
+        try {
+            $validator = Validator::make(request()->all(), [
+                'subject' => 'required',
+                'message' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return self::returnDataFail(null, $validator->errors()->first(), 422);
+            }
+
+            // new contact us message
+            $contactUs = new ContactUs();
+            $contactUs->subject = $request->subject;
+            $contactUs->message = $request->message;
+            $contactUs->user_id = Auth::guard('user-api')->user()->id;
+            if ($contactUs->save()) {
+            return self::returnDataSuccess($contactUs, 'Message Sent Successfully !');
+            }else{
+                return self::returnDataFail(null, 'Something went wrong', 500);
+            }
+        } catch (Exception $e) {
+            return self::returnDataFail(null, $e->getMessage(), 500);
+        }
+    } // end sendContactUs
+
 
 
 } // eldapour

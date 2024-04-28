@@ -64,6 +64,8 @@ Route::group(['prefix' => 'user'], function () {
         Route::post('storeFavorite', [UserController::class, 'storeFavorite']);
         Route::get('myFavorite', [UserController::class, 'myFavorite']);
 
+        Route::post('sendContactUs', [UserController::class, 'sendContactUs']);
+
 
         Route::post('addToCart', [UserController::class, 'addToCart']);
         Route::get('getCart', [UserController::class, 'getCart']);

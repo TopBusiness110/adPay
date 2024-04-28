@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class AppUser extends Authenticatable implements JWTSubject
 {
+    use HasFactory;
     protected $table = 'app_users';
 
     public function getJWTIdentifier()
@@ -43,7 +45,20 @@ class AppUser extends Authenticatable implements JWTSubject
     public function products(): HasMany
     {
         return $this->hasMany(Product::class,'vendor_id','id');
+    }
 
+    public function addresses(): HasMany
+    {
+        return $this->hasMany(Address::class,'user_id','id');
+    }
+
+    public function ads(): HasMany
+    {
+        return $this->hasMany(Ad::class,'user_id','id');
+    }
+    public function auctions(): HasMany
+    {
+        return $this->hasMany(Auction::class,'user_id','id');
     }
 
     public function carts(): HasMany

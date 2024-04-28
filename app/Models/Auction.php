@@ -22,6 +22,8 @@ class Auction extends Model
         'user_id',
         'video',
         'cat_id',
+        'price',
+        'is_sold',
         'sub_cat_id',
         'is_sold',
     ];
