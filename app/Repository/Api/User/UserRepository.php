@@ -21,15 +21,18 @@ use App\Models\Product;
 use App\Models\Shop;
 use App\Models\ShopCategory;
 use App\Models\Slider;
+use App\Models\Wishlist;
 use App\Repository\Api\ResponseApi;
 use App\Traits\FirebaseNotification;
 use App\Traits\PhotoTrait;
 use Exception;
+use http\Env\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -55,7 +58,7 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
 
             $newUser = new AppUser();
             if ($request->has('image')) {
-                $newUser->image = self::uploadImage($request->image);
+                $newUser->image = self::uploadImage($request->image,'users');
             }
             $newUser->name = $request->name;
             $newUser->phone = $request->phone;
@@ -676,6 +679,311 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
         } catch (Exception $e) {
             return self::returnDataFail(null, $e->getMessage(), 500);
         }
+
+
+    }
+
+    public function emptyCard(): JsonResponse
+    {
+
+
+        try {
+            $user = AppUser::find(Auth::guard('user-api')->user()->id);
+            $user->carts()->delete();
+            return self::returnDataSuccess(null, 'Cart Empty Successfully');
+        } catch (Exception $e) {
+            return self::returnDataFail(null, $e->getMessage(), 500);
+
+        }
+    }
+
+
+    public function deleteFromCart($request): JsonResponse
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'user_id' => 'required|exists:app_users,id',
+                'product_id' => 'required|numeric|exists:products,id',
+
+            ]);
+
+            if ($validator->fails()) {
+                $errors = $validator->errors()->first();
+                return self::returnDataFail(null, $errors, 422);
+            }
+
+            $product=Cart::where('user_id',$request->user_id)
+                      ->where('product_id',$request->product_id)->first();
+            if (!$product){
+                return self::returnDataFail(null, 'Product not found', 404);
+            }
+
+            $product->delete();
+            return self::returnDataSuccess(null, 'Product Deleted Successfully');
+        } catch (Exception $e) {
+            return self::returnDataFail(null, $e->getMessage(), 500);
+
+        }
+
+
+
+    }
+
+    public function getMyAuctions($request): JsonResponse
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'user_id' => 'required|exists:app_users,id',
+
+            ]);
+
+            if ($validator->fails()) {
+                $errors = $validator->errors()->first();
+                return self::returnDataFail(null, $errors, 422);
+            }
+            $auctions=Auction::where('user_id',$request->user_id)->get();
+
+//            $myAuctions = new Collection();
+//
+//            foreach ($auctions as $auction) {
+//                $myAuctions->push([
+//                    'auction' => new AuctionResource($auction),
+//                    'data' => $auction->toArray()
+//                ]);
+//            }
+
+            $myAuctions = AuctionResource::collection($auctions);
+
+
+
+            return self::returnDataSuccess($myAuctions, 'Product Deleted Successfully');
+        } catch (Exception $e) {
+            return self::returnDataFail(null, $e->getMessage(), 500);
+
+        }
+
+    }
+
+
+    Public function myAuctionDetails($request): JsonResponse
+    {
+
+        try {
+            $auction = Auction::where('id', $request->id)
+                    ->where('user_id', Auth::guard('user-api')->user()->id)
+                ->first();
+            if (!$auction){
+                return self::returnDataFail(null, 'Product not found', 404);
+            }
+            $data = [
+                'auction' => new AuctionResource($auction),
+                'data' => $auction->toArray()
+            ];
+            return self::returnDataSuccess($data, 'Product Retrieved Successfully');
+        } catch (Exception $e) {
+            return self::returnDataFail(null, $e->getMessage(), 500);
+        }
+    }
+
+
+    Public function isSold($request): JsonResponse
+    {
+//        return response()->json($request->id);
+
+        try {
+            $auction = Auction::where('id', $request->id)
+                ->where('user_id', Auth::guard('user-api')->user()->id)
+                ->first();
+            if (!$auction){
+                return self::returnDataFail(null, 'Product not found', 404);
+            }
+            $auction->is_sold = 1;
+            $auction->save();
+
+            return self::returnDataSuccess(null, 'Product has been sold successfully');
+        } catch (Exception $e) {
+            return self::returnDataFail(null, $e->getMessage(), 500);
+        }
+
+
+    }
+
+    public function editMyAuction($request): JsonResponse
+    {
+
+
+        try {
+            $validator = Validator::make($request->all(), [
+                'images' => 'required|image',
+                'title_ar' => 'required',
+                'description_ar' => 'required|string',
+                'user_id' => 'required|exists:app_users,id',
+                'price' => 'required|numeric',
+                'cat_id' => 'required|exists:auction_categories,id',
+                'sub_cat_id' => 'required|exists:auction_sub_categories,id',
+                'auction_id' => 'required|exists:auctions,id',
+
+            ]);
+
+            if ($validator->fails()) {
+                $errors = $validator->errors()->first();
+                return self::returnDataFail(null, $errors, 422);
+            }
+            $auction = Auction::where('id',$request->auction_id)
+                ->where('is_sold',0)
+                ->first();
+            if (!$auction){
+                return self::returnDataFail(null, 'Product not found', 404);
+            }
+            if ($request->hasFile('images')) {
+//                $imagePath = $request->file('images')->store('uploads/auction', 'public');
+                $imagePath = self::uploadImage($request->images,'auctions');
+
+                {
+
+                        if (Storage::disk('public')->exists($auction->image)) {
+
+                            Storage::disk('public')->delete($auction->image);
+                        }
+
+                    }
+                }
+            $auction->images = $imagePath;
+            $auction->title_ar = $request->title_ar;
+            $auction->description_ar = $request->description_ar ?? null;
+            $auction->price = $request->price;
+            $auction->cat_id = $request->cat_id;
+            $auction->sub_cat_id = $request->sub_cat_id;
+            $auction->save();
+
+
+
+
+            return self::returnDataSuccess(null, 'Product has been updated successfully');
+        } catch (Exception $e) {
+            return self::returnDataFail(null, $e->getMessage(), 500);
+        }
+    }
+
+
+    public function storeFavorite($request): JsonResponse
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'product_id' => 'nullable|exists:products,id',
+                'auction_id' => 'nullable|exists:auctions,id',
+            ]);
+
+            if ($validator->fails()) {
+                $errors = $validator->errors()->first();
+                return self::returnDataFail(null, $errors, 422);
+            }
+
+            $check = Wishlist::where('user_id', Auth::guard('user-api')->user()->id)
+                ->where(function ($query) use ($request) {
+                    $query->where('product_id', $request->product_id)
+                        ->orWhere('auction_id', $request->auction_id);
+                })->first();
+            if ($check) {
+                $check->delete();
+                return self::returnDataSuccess(null, 'Product has been removed from favorite successfully');
+            }
+
+            $favorite = new Wishlist();
+            $favorite->user_id = Auth::guard('user-api')->user()->id;
+            $favorite->product_id = $request->product_id ?? null;
+            $favorite->auction_id = $request->auction_id ?? null;
+            $favorite->save();
+
+
+            return self::returnDataSuccess(null, 'Product has been added to favorite successfully');
+
+
+
+        } catch (Exception $e) {
+            return self::returnDataFail(null, $e->getMessage(), 500);
+        }
+
+    }
+
+
+    public function myFavorite(): JsonResponse
+    {
+        try {
+
+
+            $favorite = Wishlist::where('user_id', Auth::guard('user-api')->user()->id)->get();
+
+
+            if (!$favorite) {
+
+                return self::returnDataSuccess(null, 'No data found', 404);
+            }
+
+
+            return self::returnDataSuccess($favorite, 'Data fetched successfully');
+
+
+
+        } catch (Exception $e) {
+            return self::returnDataFail(null, $e->getMessage(), 500);
+        }
+
+    }
+
+    public function updateProfile($request): JsonResponse
+
+    {
+
+        try {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'image' => 'nullable|image',
+            'phone' => 'required|numeric|exists:app_users,phone',
+            'password' => 'required',
+            'device_token' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            $errors = $validator->errors()->first();
+            return self::returnDataFail(null, $errors, 422);
+        }
+
+
+
+         $editUser = AppUser::where('id', Auth::guard('user-api')->user()->id)
+                  ->first();
+
+
+
+        if ($request->has('image')) {
+            $editUser->image = self::uploadImage($request->image, 'users');
+//            $editUser->image = self::deleteImage($request->image, 'users');
+        }
+        $editUser->name = $request->name;
+        $editUser->phone = $request->phone;
+        $editUser->password = Hash::make($request->password);
+        $editUser->type = 'user';
+        $editUser->device_token = $request->device_token;
+
+        if ($editUser->save()) {
+
+            $credentials = ['phone' => $request->phone, 'password' => $request->password];
+            $token = Auth::guard('user-api')->attempt($credentials);
+            $editUser['token'] = $token;
+
+            return self::returnDataSuccess(new UserResource($editUser), 'User Register Success');
+
+
+        }else {
+
+            return self::returnDataFail(null, 'User Register Failed', 500);
+        }
+    }
+        catch (Exception $e) {
+            return self::returnDataFail(null, $e->getMessage(), 500);
+        }
+
     }
 
 

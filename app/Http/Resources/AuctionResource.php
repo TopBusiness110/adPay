@@ -17,6 +17,7 @@ class AuctionResource extends JsonResource
     public function toArray($request)
     {
         $images = [];
+
         foreach ($this->images as $image) {
             $images[] = asset($image);
         }

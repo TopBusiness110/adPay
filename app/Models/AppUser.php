@@ -45,4 +45,9 @@ class AppUser extends Authenticatable implements JWTSubject
         return $this->hasMany(Product::class,'vendor_id','id');
 
     }
+
+    public function carts(): HasMany
+    {
+        return $this->hasMany(Cart::class,'user_id','id');
+    }
 }

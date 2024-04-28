@@ -23,6 +23,7 @@ class Auction extends Model
         'video',
         'cat_id',
         'sub_cat_id',
+        'is_sold',
     ];
 
     protected $casts = [

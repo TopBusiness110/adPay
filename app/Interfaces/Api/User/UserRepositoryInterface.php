@@ -155,6 +155,34 @@ interface UserRepositoryInterface
      */
     public function storeAuction($request): JsonResponse;
 
+    /**
+     * @return JsonResponse
+     */
+    public function emptyCard(): JsonResponse;
+    public function deleteFromCart($request): JsonResponse;
+
+    /**
+     * @return JsonResponse
+     */
+    public function getMyAuctions($request): JsonResponse;
+
+    /**
+     * @param $id
+     * @return JsonResponse
+     */
+    public function myAuctionDetails($request): JsonResponse;
+    public function isSold($request): JsonResponse;
+    public function editMyAuction($request): JsonResponse;
+
+    /**
+     * @param $request
+     * @return JsonResponse
+     */
+    public function storeFavorite($request): JsonResponse;
+    public function myFavorite(): JsonResponse;
+
+    public function updateProfile($request): JsonResponse;
+
 
 }
 ###############|> Made By https://github.com/eldapour (eldapour) 🚀
