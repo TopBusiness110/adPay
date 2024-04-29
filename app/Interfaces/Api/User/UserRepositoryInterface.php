@@ -167,6 +167,11 @@ interface UserRepositoryInterface
      * @return JsonResponse
      */
     public function emptyCard(): JsonResponse;
+
+    /**
+     * @param $request
+     * @return JsonResponse
+     */
     public function deleteFromCart($request): JsonResponse;
 
     /**
@@ -179,7 +184,17 @@ interface UserRepositoryInterface
      * @return JsonResponse
      */
     public function myAuctionDetails($request): JsonResponse;
+
+    /**
+     * @param $request
+     * @return JsonResponse
+     */
     public function isSold($request): JsonResponse;
+
+    /**
+     * @param $request
+     * @return JsonResponse
+     */
     public function editMyAuction($request): JsonResponse;
 
     /**
@@ -206,9 +221,6 @@ interface UserRepositoryInterface
      */
 
     public function sendContactUs(Request $request): JsonResponse;
-    /**
-     *
-     */
 
     /**
      * @param $id
@@ -216,7 +228,15 @@ interface UserRepositoryInterface
      */
     public function myAccount(): JsonResponse;
 
+    /**
+     * @return JsonResponse
+     */
     public function myCoins(): JsonResponse;
+
+    /**
+     * @return JsonResponse
+     */
+    public function myWallet(): JsonResponse;
 
 
 }

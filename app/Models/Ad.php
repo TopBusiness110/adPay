@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -36,5 +37,14 @@ class Ad extends Model
     public function package(): BelongsTo
     {
         return $this->belongsTo(AdPackage::class,'package_id','id')->select('id','count','price');
+    }
+
+    public function scopePaymentSuccess(Builder $query): Builder
+    {
+        return $query->where('payment_status',1);
+    }
+    public function scopeCompleted(Builder $query): Builder
+    {
+        return $query->where('complete',1);
     }
 }

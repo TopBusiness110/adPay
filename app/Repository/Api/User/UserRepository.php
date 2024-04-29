@@ -18,6 +18,7 @@ use App\Models\Cart;
 use App\Models\contactUs;
 use App\Models\Order;
 use App\Models\OrderDetail;
+use App\Models\Payment;
 use App\Models\Product;
 use App\Models\Setting;
 use App\Models\Shop;
@@ -1072,13 +1073,36 @@ class UserRepository extends ResponseApi implements UserRepositoryInterface
             if (!$user) {
                 return self::returnDataFail(null, 'User not found', 404);
             } else {
-
                 return self::returnDataSuccess($data, 'Data fetched successfully');
             }
 
         } catch (Exception $e) {
 
         } catch (Exception $e) {
+            return self::returnDataFail(null, $e->getMessage(), 500);
+        }
+    } // end myCoins
+
+    public function myWallet(): JsonResponse
+    {
+        try {
+            $config_point = Setting::value('point_video');
+            $user = AppUser::whereId(Auth::guard('user-api')->user()->id)->first();
+            $wallet = $user->points / $config_point;
+            $wallet_orders = Payment::whereUserId($user->id)
+                ->whereStatus(1)
+                ->whereType('wallet')
+                ->get();
+
+            $data = [
+                'wallet' => $wallet,
+                'payments' => $wallet_orders,
+                'user' => new UserResource($user),
+            ];
+
+            return self::returnDataSuccess($data, 'Data fetched successfully');
+
+        }catch (Exception $e) {
             return self::returnDataFail(null, $e->getMessage(), 500);
         }
     }

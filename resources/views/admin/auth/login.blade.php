@@ -28,7 +28,7 @@
     </main>
     <div class="welcome-container">
         <h1 class="heading-secondary">مرحبا بعودتك <span class="lg"></span></h1>
-        <img src="{{ asset($settings->logo ?? 'uploads/users/avatar.png')}}" alt="login" style="max-width:450px;mix-blend-mode: multiply">
+        <img src="{{ asset('logoAdpay.png')}}" alt="login" style="max-width:450px;mix-blend-mode: multiply">
     </div>
 </div>
 
