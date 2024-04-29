@@ -30,7 +30,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <a href="{{ route('ad_packages.index') }}" class="btn btn-info text-white">رجوع للخلف</a>
+                            <a href="{{ route('auctionCategories.index') }}" class="btn btn-info text-white">رجوع للخلف</a>
                             <button type="submit" class="btn btn-primary" id="addButton">تعديل</button>
                         </div>
                     </form>

@@ -19,14 +19,7 @@
                         @method('put')
                         <div class="form-group">
                             <div class="row">
-                                <div class="col-md-6">
-                                    <label for="title_ar" class="form-control-label">العنوان بالعربي</label>
-                                    <input type="text" class="form-control" value="{{ $ad_package['title_ar'] }}" name="title_ar">
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="title_en" class="form-control-label">العنوان بالانجليزي</label>
-                                    <input type="text" class="form-control" value="{{ $ad_package['title_en'] }}" name="title_en">
-                                </div>
+
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
