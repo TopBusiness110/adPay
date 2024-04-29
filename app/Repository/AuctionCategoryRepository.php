@@ -1,9 +1,10 @@
-<?php 
+<?php
 
 namespace App\Repository;
 
 use App\Interfaces\AuctionCategoryInterface;
 use App\Models\AuctionCategory;
+use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
 
 class AuctionCategoryRepository implements AuctionCategoryInterface
@@ -37,6 +38,16 @@ class AuctionCategoryRepository implements AuctionCategoryInterface
     public function store($request)
     {
         try {
+            $validator = Validator::make(request()->all(), [
+                'title_ar' => 'required',
+                'title_en' => 'required',
+
+            ]);
+
+            if ($validator->fails()) {
+                toastr()->addError('هذه الحقول مطلوبه');
+                return redirect()->back();            }
+
             $inputs = $request->all();
 
             if ($this->createAdPackage($inputs)) {

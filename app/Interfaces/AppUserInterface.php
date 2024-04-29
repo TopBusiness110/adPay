@@ -8,4 +8,5 @@ Interface AppUserInterface {
 
     public function delete($request);
     public function changeUserStatus($request);
+    public function showShop($appUser);
 }

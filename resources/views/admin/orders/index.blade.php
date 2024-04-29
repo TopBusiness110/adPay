@@ -27,7 +27,6 @@
                             <option value="all">الكل</option>
                             <option value="new">جديدة</option>
                             <option value="pending">معلق</option>
-                            <option value="cancelled">تم الغاه</option>
                             <option value="complete">مكتملة</option>
                         </select>
                     </div>
@@ -51,7 +50,7 @@
                                 <th class="min-w-25px">#</th>
                                 <th class="min-w-50px">المستخدم</th>
                                 <th class="min-w-50px">النوع</th>
-                                <th class="min-w-50px">المرجع</th>
+                                <th class="min-w-50px">رقم الطلب </th>
                                 <th class="min-w-50px">التاريخ</th>
                                 <th class="min-w-50px">المجموع</th>
                                 <th class="min-w-50px rounded-end">العمليات</th>

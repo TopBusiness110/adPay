@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Interfaces\AppUserInterface;
+use App\Models\AppUser;
 use Illuminate\Http\Request;
 
 class AppUserController extends Controller
@@ -27,5 +28,9 @@ class AppUserController extends Controller
     public function changeUserStatus(Request $request)
     {
         return $this->appUserInterface->changeUserStatus($request);
+    }
+    public function showShop(AppUser $appUser)
+    {
+        return $this->appUserInterface->showShop($appUser);
     }
 }

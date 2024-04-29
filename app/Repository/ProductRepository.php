@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Interfaces\ProductInterface;
+use App\Models\AppUser;
 use App\Models\Product;
 use Yajra\DataTables\DataTables;
 
@@ -35,6 +36,11 @@ class ProductRepository implements ProductInterface
                         return 'مستخدمة' ?? '';
                     }
                 })
+                ->editColumn('status', function ($product) {
+                    return '<input class="tgl tgl-ios statusBtn1" data-id="'. $product->id .'" name="statusBtn1" id="statusProduct-' . $product->id . '" type="checkbox" '. ($product->status == 1 ? 'checked' : 'unchecked') .'/>
+                    <label class="tgl-btn" dir="ltr" for="statusProduct-' . $product->id . '"></label>';
+
+                })
                 ->editColumn('images', function ($products) {
                     return '
                     <img alt="image" onclick="window.open(this.src)" class="avatar avatar-md rounded-circle" src="' . asset('storage/' . $products->image) . '">
@@ -47,8 +53,11 @@ class ProductRepository implements ProductInterface
         }
     }
 
-    public function changeStatusProduct($request)
+    public function changeProductsStatus($request)
     {
+        $product = Product::find($request->id);
+        $product->status = $request->status;
+        $product->save();
     }
 
     public function delete($request)

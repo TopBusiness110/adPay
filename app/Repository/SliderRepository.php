@@ -59,7 +59,7 @@ class SliderRepository implements SliderInterface
             $this->uploadImage($request, $inputs);
 
             if ($this->create($inputs)) {
-                toastr()->addSuccess('تم اضافة الاشعار بنجاح');
+                toastr()->addSuccess('تم اضافة الصوره  بنجاح');
                 return redirect()->back();
             } else {
                 toastr()->addError('هناك خطأ ما');

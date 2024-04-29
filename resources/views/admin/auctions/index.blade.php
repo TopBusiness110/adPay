@@ -31,6 +31,7 @@
                                 <th class="min-w-25px">#</th>
                                 <th class="min-w-50px">الصورة</th>
                                 <th class="min-w-50px">العنوان</th>
+                                <th class="min-w-50px">عدد التعليقات</th>
                                 <th class="min-w-50px">المستخدم</th>
                                 <th class="min-w-50px">فئة</th>
                                 <th class="min-w-50px">الفئة الفرعية</th>
@@ -78,6 +79,7 @@
             {data: 'id', name: 'id'},
             {data: 'image', name: 'image'},
             {data: 'title_ar', name: 'title_ar'},
+            {data: 'comments', name: 'comments'},
             {data: 'user_id', name: 'user_id'},
             {data: 'cat_id', name: 'cat_id'},
             {data: 'sub_cat_id', name: 'sub_cat_id'},
@@ -87,7 +89,7 @@
 
         deleteScript('{{route('auction.delete', ':id')}}');
 
-        
+
     </script>
 @endsection
 

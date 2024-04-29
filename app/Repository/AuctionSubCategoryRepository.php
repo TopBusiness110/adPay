@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Interfaces\AuctionSubCategoryInterface;
 use App\Models\AuctionCategory;
 use App\Models\AuctionSubCategory;
+use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
 
 class AuctionSubCategoryRepository implements AuctionSubCategoryInterface
@@ -26,6 +27,7 @@ class AuctionSubCategoryRepository implements AuctionSubCategoryInterface
                 ->editColumn('cat_id', function ($auction_sub_categories) {
                     return $auction_sub_categories->auctionCategory->title_ar;
                 })
+
                 ->escapeColumns([])
                 ->make(true);
         } else {
@@ -42,6 +44,17 @@ class AuctionSubCategoryRepository implements AuctionSubCategoryInterface
     public function store($request)
     {
         try {
+            $validator = Validator::make(request()->all(), [
+                'title_ar' => 'required',
+                'title_en' => 'required',
+                 'cat_id' => 'required',
+
+            ]);
+
+            if ($validator->fails()) {
+                toastr()->addError('هذه الحقول مطلوبه');
+                return redirect()->back();
+            }
             $inputs = $request->all();
 
             if ($this->create($inputs)) {
@@ -71,6 +84,8 @@ class AuctionSubCategoryRepository implements AuctionSubCategoryInterface
     public function update($request, $id)
     {
         try {
+
+
             $auction_sub_category = AuctionSubCategory::findOrFail($id);
 
             $inputs = $request->except('id');

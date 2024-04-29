@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Repository;
 
@@ -29,6 +29,9 @@ class AuctionRepository implements AuctionInterface
                 })
                 ->editColumn('sub_cat_id', function ($auctions) {
                     return $auctions->auctionSubCategory->title_ar;
+                })
+                ->addColumn('comments', function ($auction_sub_comments) {
+                    return $auction_sub_comments->comments()->count();
                 })
                 ->editColumn('image', function ($auctions) {
                     return '

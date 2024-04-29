@@ -56,11 +56,11 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth:user'], function () {
 
     #============================ Auction Category =====================================
     Route::get('auction_categories', [AuctionCategoryController::class, 'index'])->name('auctionCategories.index');
-    Route::get('auction_categorY/create', [AuctionCategoryController::class, 'showCreate'])->name('auctionCategory.create');
-    Route::post('auction_categorY/store', [AuctionCategoryController::class, 'store'])->name('auctionCategory.store');
-    Route::get('auction_categorY/{id}/edit', [AuctionCategoryController::class, 'showEdit'])->name('auctionCategory.edit');
-    Route::put('auction_categorY/update/{id}', [AuctionCategoryController::class, 'update'])->name('auctionCategory.update');
-    Route::delete('auction_categorY/{id}/delete', [AuctionCategoryController::class, 'delete'])->name('auctionCategory.delete');
+    Route::get('auction_category/create', [AuctionCategoryController::class, 'showCreate'])->name('auctionCategory.create');
+    Route::post('auction_category/store', [AuctionCategoryController::class, 'store'])->name('auctionCategory.store');
+    Route::get('auction_category/{id}/edit', [AuctionCategoryController::class, 'showEdit'])->name('auctionCategory.edit');
+    Route::put('auction_category/update/{id}', [AuctionCategoryController::class, 'update'])->name('auctionCategory.update');
+    Route::delete('auction_category/{id}/delete', [AuctionCategoryController::class, 'delete'])->name('auctionCategory.delete');
 
     #============================ Auction Sub Category =====================================
     Route::get('auction_sub_categories', [AuctionSubCategoryController::class, 'index'])->name('auctionSubCategories.index');
@@ -80,6 +80,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth:user'], function () {
     Route::get('app_users', [AppUserController::class, 'index'])->name('appUsers.index');
     Route::delete('app_user/{id}/delete', [AppUserController::class, 'delete'])->name('appUser.delete');
     Route::post('changeUserStatus', [AppUserController::class, 'changeUserStatus'])->name('changeUserStatus');
+    Route::get('showShop/{app_user}', [AppUserController::class, 'showShop'])->name('showShop');
 
     #============================ Auction =====================================
     Route::get('auctions', [AuctionController::class, 'index'])->name('auctions.index');
@@ -107,6 +108,8 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth:user'], function () {
     #============================ Product =====================================
     Route::get('products', [ProductController::class, 'index'])->name('products.index');
     Route::delete('product/{id}/delete', [ProductController::class, 'delete'])->name('product.delete');
+    Route::post('changeProductsStatus', [ProductController::class, 'changeProductsStatus'])->name('changeProductsStatus');
+
 
     #============================ Setting =====================================
     Route::get('setting/index', [SettingController::class, 'showEditSetting'])->name('setting.index');

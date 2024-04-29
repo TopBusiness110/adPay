@@ -83,7 +83,7 @@
 
         deleteScript('{{route('auctionSubCategory.delete', ':id')}}');
 
-        
+
     </script>
 @endsection
 

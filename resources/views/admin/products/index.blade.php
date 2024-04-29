@@ -36,6 +36,7 @@
                                 <th class="min-w-50px">السعر</th>
                                 <th class="min-w-50px">الفئة</th>
                                 <th class="min-w-50px">فئة الفرعية</th>
+                                <th class="min-w-50px">الحاله</th>
                                 <th class="min-w-50px rounded-end">العمليات</th>
                             </tr>
                             </thead>
@@ -85,6 +86,7 @@
             {data: 'price', name: 'price'},
             {data: 'shop_cat_id', name: 'shop_cat_id'},
             {data: 'shop_sub_cat', name: 'shop_sub_cat'},
+            {data: 'status', name: 'status'},
             {data: 'action', name: 'action', orderable: false, searchable: false},
         ]
         showData('{{route('products.index')}}', columns);
@@ -93,6 +95,36 @@
 
 
     </script>
+
+<script>
+
+    $(document).on('click', '.statusBtn1', function() {
+        var id = $(this).data('id');
+        var val = $(this).is(':checked') ? 1 : 0;
+
+        $.ajax({
+            url: '{{ route('changeProductsStatus') }}',
+            type: 'post',
+            data: {
+                "_token": "{{ csrf_token() }}",
+                'id': id,
+                'status': val
+            },
+            success: function(data) {
+
+                // Check if val is not equal to 0 before executing toastr.success()
+                if (val !== 0) {
+                    toastr.success('Success', 'تم التفعيل بنجاح');
+                }
+                else
+                {
+                    toastr.warning('Success', 'تم الغاء التفعيل');
+                }
+            },
+        });
+    });
+</script>
+
 @endsection
 
 

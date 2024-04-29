@@ -20,13 +20,15 @@ class ProductController extends Controller
         return $this->productInterface->index($request);
     }
 
-    public function changeStatusProduct(Request $request)
+    public function changeProductsStatus(Request $request)
     {
-        return $this->productInterface->changeStatusProduct($request);
+        return $this->productInterface->changeProductsStatus($request);
     }
 
     public function delete(Request $request)
     {
         return $this->productInterface->delete($request);
     }
+
+
 }
