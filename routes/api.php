@@ -91,6 +91,10 @@ Route::group(['prefix' => 'user'], function () {
         Route::get('myCoins', [UserController::class, 'myCoins']);
 
 
+        //my Coins
+        Route::get('myWallet', [UserController::class, 'myWallet']);
+
+
 
 
     });

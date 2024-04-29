@@ -199,6 +199,11 @@ class UserController extends Controller
         return $this->userRepositoryInterface->myCoins();
     }
 
+    public function myWallet(): JsonResponse
+    {
+        return $this->userRepositoryInterface->myWallet();
+    }
+
 
 }
 ###############|> Made By https://github.com/eldapour (eldapour) 🚀

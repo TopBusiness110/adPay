@@ -21,6 +21,7 @@ class UserResource extends JsonResource
             'image' =>asset($this->image),
             'phone' =>$this->phone,
             'type' =>$this->type,
+            'points' =>$this->points,
             'device_token' =>$this->device_token,
             'session' =>$this->session,
             'token' =>  $request->header('Authorization') ??  'Bearer ' .$this->token,
