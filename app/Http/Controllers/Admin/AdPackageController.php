@@ -27,7 +27,7 @@ class AdPackageController extends Controller
         return $this->adPackageInterface->showCreate();
     }
 
-    public function store(AdPackageStoreRequest $request)
+    public function store(Request $request)
     {
         return $this->adPackageInterface->store($request);
     }

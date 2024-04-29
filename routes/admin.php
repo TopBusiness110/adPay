@@ -73,6 +73,8 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth:user'], function () {
     #============================ Ads =====================================
     Route::get('ads', [AdController::class, 'index'])->name('ads.index');
     Route::delete('ad/{id}/delete', [AdController::class, 'delete'])->name('ad.delete');
+    Route::post('changeAdStatus', [AdController::class, 'changeAdStatus'])->name('changeAdStatus');
+
 
     #============================ App User =====================================
     Route::get('app_users', [AppUserController::class, 'index'])->name('appUsers.index');

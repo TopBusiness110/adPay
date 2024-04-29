@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Interfaces\AdPackageInterface;
 use App\Models\AdPackage;
+use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
 
 class AdPackageRepository implements AdPackageInterface
@@ -37,16 +38,30 @@ class AdPackageRepository implements AdPackageInterface
     public function store($request)
     {
         try {
-            $inputs = $request->all();
 
+
+            $validator = Validator::make(request()->all(), [
+                'title_ar' => 'required',
+                'title_en' => 'required',
+                'count' => 'required',
+                'price' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                toastr()->addError('هذه الحقول مطلوبه');
+                return redirect()->back();            }
+
+            $inputs = $request->all();
             if ($this->createAdPackage($inputs)) {
                 toastr()->addSuccess('تم اضافة الباقة بنجاح');
                 return redirect()->back();
             } else {
                 toastr()->addError('هناك خطأ ما');
+                return redirect()->back();
             }
         } catch (\Exception $e) {
             toastr()->addError('حدث خطأ: ' . $e->getMessage());
+            return redirect()->back(); // Add this line to return a response
         }
     }
 

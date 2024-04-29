@@ -22,6 +22,7 @@
                         </button>
                     </a>
                 </div>
+
                 <div class="card-body">
                     <div class="table-responsive">
                         <!--begin::Table-->
@@ -29,7 +30,6 @@
                             <thead>
                             <tr class="fw-bolder text-muted bg-light">
                                 <th class="min-w-25px">#</th>
-                                <th class="min-w-50px">العنوان</th>
                                 <th class="min-w-50px">العدد</th>
                                 <th class="min-w-50px">السعر</th>
                                 <th class="min-w-50px rounded-end">العمليات</th>

@@ -21,6 +21,7 @@
 									</span> اضافة جديد
                         </button>
                     </a> --}}
+
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -30,6 +31,7 @@
                             <tr class="fw-bolder text-muted bg-light">
                                 <th class="min-w-25px">#</th>
                                 <th class="min-w-50px">الصورة</th>
+                                <th class="min-w-50px">الفيديو</th>
                                 <th class="min-w-50px">العنوان</th>
                                 <th class="min-w-50px">المستخدم</th>
                                 <th class="min-w-50px">عدد المشاهدات</th>
@@ -78,6 +80,7 @@
         var columns = [
             {data: 'id', name: 'id'},
             {data: 'image', name: 'image'},
+            {data: 'video', name: 'video'},
             {data: 'title_ar', name: 'title_ar'},
             {data: 'user_id', name: 'user_id'},
             {data: 'count_views', name: 'count_views'},
@@ -89,7 +92,36 @@
 
         deleteScript('{{route('ad.delete', ':id')}}');
 
-        
+
+
+    </script>
+    <script>
+
+        $(document).on('click', '.adStatusBtn', function() {
+            var id = $(this).data('id');
+            var val = $(this).is(':checked') ? 1 : 0;
+
+            $.ajax({
+                url: '{{ route('changeAdStatus') }}',
+                type: 'post',
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    'id': id,
+                    'status': val
+                },
+                success: function(data) {
+
+                    // Check if val is not equal to 0 before executing toastr.success()
+                    if (val !== 0) {
+                        toastr.success('Success', 'تم التفعيل بنجاح');
+                    }
+                    else
+                    {
+                        toastr.warning('Success', 'تم الغاء التفعيل');
+                    }
+                },
+            });
+        });
     </script>
 @endsection
 
