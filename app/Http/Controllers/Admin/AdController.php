@@ -19,4 +19,11 @@ class AdController extends Controller
     {
         return $this->adInterface->index($request);
     }
+
+
+
+    public function changeAdStatus(Request $request)
+        {
+            return $this->adInterface->changeAdStatus($request);
+        }
 }

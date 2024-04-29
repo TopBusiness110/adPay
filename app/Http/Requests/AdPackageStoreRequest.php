@@ -26,16 +26,18 @@ class AdPackageStoreRequest extends FormRequest
         return [
             'title_ar' => 'required',
             'title_en' => 'required',
-            'count' => 'required',
-            'price' => 'required',
+            'count' =>    'required',
+            'price' =>    'required',
         ];
     }
 
     public function messages()
     {
         return [
-            'image.required' => 'الصورة مطلوبة',
-            'image.image' => 'يجب ان تكون صورة',
+            'title_ar.required' => 'العنوان مطلوب',
+            'title_en.required' => 'العنوان مطلوب',
+            'count.required' => 'العدد مطلوب',
+            'price.required' => 'السعر مطلوب',
         ];
     }
 }

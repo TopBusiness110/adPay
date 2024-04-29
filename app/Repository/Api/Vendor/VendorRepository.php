@@ -461,7 +461,7 @@ class VendorRepository extends ResponseApi implements VendorRepositoryInterface
                 'description_en' => 'required',
                 'count_views' => 'required',
                 'package_id' => 'required',
-                'video' => 'nullable',
+                'video' => 'required',
             ]);
 
             if ($validator->fails()) {
