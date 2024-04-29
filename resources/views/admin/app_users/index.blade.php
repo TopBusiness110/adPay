@@ -77,6 +77,24 @@
             </div>
         </div>
         <!-- MODAL CLOSED -->
+
+        <!-- Create Or Edit Modal -->
+        <div class="modal fade" id="editOrCreate" data-backdrop="static" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="example-Modal3">بيانات المتجر</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="modal-body">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Create Or Edit Modal -->
     </div>
     @include('admin/layouts/myAjaxHelper')
 @endsection
@@ -84,6 +102,21 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script>
+
+        function showEditModal(routeOfEdit){
+            $(document).on('click', '.showBtn', function () {
+                var id = $(this).data('id')
+                var url = routeOfEdit;
+                url = url.replace(':id', id)
+                $('#modal-body').html(loader)
+                $('#editOrCreate').modal('show')
+
+                setTimeout(function () {
+                    $('#modal-body').load(url)
+                }, 500)
+            })
+        }
+
         var columns = [
             {data: 'id', name: 'id'},
             {data: 'image', name: 'image'},
@@ -95,6 +128,8 @@
         ]
 
         deleteScript('{{route('appUser.delete', ':id')}}');
+
+        showEditModal('{{ route('showShop', ':id') }}');
 
         let ajax = {
             url: '{{route('appUsers.index')}}',

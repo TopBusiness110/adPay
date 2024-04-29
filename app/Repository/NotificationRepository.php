@@ -28,6 +28,9 @@ class NotificationRepository implements NotificationInterface
                     <img alt="image" onclick="window.open(this.src)" class="avatar avatar-md rounded-circle" src="' . asset('storage/' . $notifications->logo) . '">
                     ';
                 })
+                ->editColumn('user_id', function ($user_id) {
+                    return ($user_id->user) ? $user_id->user->name : '';
+                })
                 ->escapeColumns([])
                 ->make(true);
         } else {

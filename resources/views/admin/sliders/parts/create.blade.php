@@ -30,7 +30,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
-                                    <label for="status" class="form-control-label">العدد</label>
+                                    <label for="status" class="form-control-label">الحاله</label>
                                     <select name="status" class="form-control">
                                         <option value="">اختر</option>
                                         <option value="0">غير مفعل</option>

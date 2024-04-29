@@ -18,16 +18,21 @@ class AppUserRepository implements AppUserInterface
             $app_users = $app_users->latest()->get();
 
             return DataTables::of($app_users)
-                ->addColumn('action', function ($app_users) {
-                    return '
-                            <button class="btn btn-pill btn-danger-light" data-toggle="modal" data-target="#delete_modal"
-                                        data-id="' . $app_users->id . '" data-title="' . $app_users->name . '">
-                                        <i class="fas fa-trash"></i>
-                                </button>
-                       ';
+                ->addColumn('action', function ($app_user) {
+                    $buttons = '<button class="btn btn-pill btn-danger-light" data-toggle="modal" data-target="#delete_modal"
+                    data-id="' . $app_user->id . '" data-title="' . $app_user->name . '">
+                    <i class="fas fa-trash"></i>
+                </button>';
+
+                    if ($app_user->type == "vendor") {
+                        $buttons .= '
+                        <button type="button" data-id="' . $app_user->id . '" class="btn btn-pill btn-info-light showBtn">بيانات المتجر</button>
+                        ';
+                    }
+                    return $buttons;
                 })
                 ->editColumn('status', function ($app_users) {
-                    return '<input class="tgl tgl-ios statusBtn" data-id="'. $app_users->id .'" name="statusBtn" id="statusUser-' . $app_users->id . '" type="checkbox" '. ($app_users->status == 1 ? 'checked' : 'unchecked') .'/>
+                    return '<input class="tgl tgl-ios statusBtn" data-id="' . $app_users->id . '" name="statusBtn" id="statusUser-' . $app_users->id . '" type="checkbox" ' . ($app_users->status == 1 ? 'checked' : 'unchecked') . '/>
                     <label class="tgl-btn" dir="ltr" for="statusUser-' . $app_users->id . '"></label>';
 
                 })
@@ -66,5 +71,10 @@ class AppUserRepository implements AppUserInterface
 
         $app_user->delete();
         return response(['message' => 'تم الحذف بنجاح', 'status' => 200], 200);
+    }
+
+    public function showShop($app_user): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application
+    {
+        return view('admin/app_users/shop',compact('app_user'));
     }
 }
